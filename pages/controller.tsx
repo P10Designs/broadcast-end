@@ -1,0 +1,769 @@
+import { Match, Player } from 'constants/interfaces'
+import type { GetServerSideProps, NextPage } from 'next'
+import { TeamComponent, ShootCounter, Score, Time, Selector, Buttons } from 'Components/Controller'
+import { useEffect, useState } from 'react'
+import StorageIcon from '@mui/icons-material/Storage'
+import EditIcon from '@mui/icons-material/Edit'
+import CancelIcon from '@mui/icons-material/Cancel'
+import { FormControl, InputLabel, Select, MenuItem, Box } from '@mui/material'
+
+const periods = ['PERIODO 1', 'DESCANSO', 'PERIODO 2', 'DESCANSO', 'OVERTIME', 'PENALTIES']
+const perSmall = ['1st', 'DES', '2nd', 'DES', 'OT', 'PEN']
+
+const faults = ['CC', 'AG', 'BE', 'CA', 'CG', 'CE', 'CI', 'IF', 'CZ', 'SP', 'EG', 'MC', 'RZ', 'PP', 'SL', 'SA', 'ZC', 'VI']
+
+interface MenuProps{
+  match: Match,
+  players: Player[]
+}
+
+const data:any = {
+  time: '25:00',
+  period: {
+    small: '1st',
+    big: 'PERIODO 1'
+  },
+  localString: '',
+  visitorString: '',
+  localFault1: '',
+  localFault2: '',
+  visitorFault1: '',
+  visitorFault2: '',
+  localPlayerSelected: '',
+  visitorPlayerSelected: '',
+  events: [],
+  local: {
+    players: 4,
+    goals: {
+      first: 0,
+      second: 0,
+      third: 0
+    },
+    shoots: {
+      first: 0,
+      second: 0,
+      third: 0
+    },
+    faults: {
+      first: 0,
+      second: 0,
+      third: 0
+    },
+    saques: {
+      first: 0,
+      second: 0,
+      third: 0
+    },
+    pos: {
+      first: 0,
+      second: 0,
+      third: 0
+    },
+    posTotal: 0,
+    saquesTotal: 0,
+    goalsTotal: 0,
+    shootsTotal: 0,
+    pimTotal: 0
+  },
+  visitor: {
+    players: 4,
+    goals: {
+      first: 0,
+      second: 0,
+      third: 0
+    },
+    faults: {
+      first: 0,
+      second: 0,
+      third: 0
+    },
+    shoots: {
+      first: 0,
+      second: 0,
+      third: 0
+    },
+    saques: {
+      first: 0,
+      second: 0,
+      third: 0
+    },
+    pos: {
+      first: 0,
+      second: 0,
+      third: 0
+    },
+    posTotal: 0,
+    saquesTotal: 0,
+    goalsTotal: 0,
+    shootsTotal: 0,
+    pimTotal: 0
+  }
+}
+
+const Menu: NextPage<MenuProps> = ({ match, players }) => {
+  const [selected, setSelected] = useState('season')
+  const [view, setView] = useState(false)
+  const [modalType, setModalType] = useState('')
+  const [localSelectedPlayer, setLocalSelectedPlayer] = useState<Player>()
+  const [visitorSelectedPlayer, setVisitorSelectedPlayer] = useState<Player>()
+  const [running, setTimeRunning] = useState(false)
+  const [field1, setField1] = useState('')
+  const [field2, setField2] = useState('')
+  const [team, setTeam] = useState('')
+  const [posesion, setPosesion] = useState('')
+  const [update, setUpdate] = useState('')
+  let ms = 99
+
+  const localPlayerHandler = (row: Player) => {
+    setLocalSelectedPlayer(row)
+    data.localPlayerSelected = row
+  }
+
+  const visitorPlayerHandler = (row: Player) => {
+    setVisitorSelectedPlayer(row)
+    data.visitorPlayerSelected = row
+  }
+
+  const exportData = async () => {
+    let req = await fetch('https://api.cplv-tv.tk/app/data', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+    const mixed:any[] = []
+    for (let i = 0; i < localPlayers.length; i++) {
+      mixed.push(localPlayers[i])
+    }
+    for (let i = 0; i < visitorPlayers.length; i++) {
+      mixed.push(visitorPlayers[i])
+    }
+    req = await fetch('https://api.cplv-tv.tk/app/players', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(mixed)
+    })
+    return req.json()
+  }
+
+  const timer = async () => {
+    if (running) {
+      const time = document.querySelector('#realtime')
+      if (time === null || time === undefined || time.textContent === null) return
+      const split = time.textContent.split(':')
+      if (ms !== 0) {
+        ms -= 1
+      } else if (time !== undefined) {
+        if (data.localFault1 !== '' || data.localFault2 !== '') {
+          if (data.localFault1 !== '') {
+            const fault1 = data.localFault1.split(':')
+            let update = true
+            if (Number(fault1[1]) === 0) {
+              if (Number(fault1[0]) === 0) {
+                if (data.localFault2 !== '') {
+                  update = false
+                  data.localFault1 = data.localFault2
+                  data.local.players += 1
+                  data.localFault2 = ''
+                } else {
+                  data.localFault1 = ''
+                }
+              } else {
+                fault1[0] = String(Number(fault1[0]) - 1)
+                fault1[1] = '59'
+              }
+            } else {
+              fault1[1] = String(Number(fault1[1]) - 1)
+            }
+            if (update) data.localFault1 = `${Number(fault1[0]) < 10 ? '0' + Number(fault1[0]) : Number(fault1[0])}:${Number(fault1[1]) < 10 ? '0' + Number(fault1[1]) : Number(fault1[1])}`
+            setUpdate(String(Math.random()))
+          }
+          if (data.localFault2 !== '') {
+            const fault2 = data.localFault2.split(':')
+            if (Number(fault2[1]) === 0) {
+              if (Number(fault2[0]) === 0) {
+                data.localFault2 = ''
+              } else {
+                fault2[0] = String(Number(fault2[0]) - 1)
+                fault2[1] = '59'
+              }
+            } else {
+              fault2[1] = String(Number(fault2[1]) - 1)
+            }
+            data.localFault2 = `${Number(fault2[0]) < 10 ? '0' + Number(fault2[0]) : Number(fault2[0])}:${Number(fault2[1]) < 10 ? '0' + Number(fault2[1]) : Number(fault2[1])}`
+            setUpdate(String(Math.random()))
+          }
+        }
+        if (data.visitorFault1 !== '' || data.visitorFault2 !== '') {
+          if (data.visitorFault1 !== '') {
+            const fault1 = data.visitorFault1.split(':')
+            let update = true
+            if (Number(fault1[1]) === 0) {
+              if (Number(fault1[0]) === 0) {
+                if (data.visitorFault2 !== '') {
+                  update = false
+                  data.visitorFault1 = data.visitorFault2
+                  data.visitor.players += 1
+                  data.visitorFault2 = ''
+                } else {
+                  data.visitorFault1 = ''
+                }
+              } else {
+                fault1[0] = String(Number(fault1[0]) - 1)
+                fault1[1] = '59'
+              }
+            } else {
+              fault1[1] = String(Number(fault1[1]) - 1)
+            }
+            if (update) data.visitorFault1 = `${Number(fault1[0]) < 10 ? '0' + Number(fault1[0]) : Number(fault1[0])}:${Number(fault1[1]) < 10 ? '0' + Number(fault1[1]) : Number(fault1[1])}`
+            setUpdate(String(Math.random()))
+          }
+          if (data.visitorFault2 !== '') {
+            const fault2 = data.visitorFault2.split(':')
+            if (Number(fault2[1]) === 0) {
+              if (Number(fault2[0]) === 0) {
+                data.visitorFault2 = ''
+              } else {
+                fault2[0] = String(Number(fault2[0]) - 1)
+                fault2[1] = '59'
+              }
+            } else {
+              fault2[1] = String(Number(fault2[1]) - 1)
+            }
+            data.visitorFault2 = `${Number(fault2[0]) < 10 ? '0' + Number(fault2[0]) : Number(fault2[0])}:${Number(fault2[1]) < 10 ? '0' + Number(fault2[1]) : Number(fault2[1])}`
+            setUpdate(String(Math.random()))
+          }
+        }
+
+        if (posesion !== '') {
+          const passed = (25 * 60) - (Number(split[0]) * 60 + Number(split[1]))
+          if (data.period.big === 'PERIODO 1') {
+            if (posesion === 'local') {
+              data.local.pos.first += 1
+            } else {
+              data.visitor.pos.first += 1
+            }
+            data.visitor.posTotal = Number((data.visitor.pos.first * 100 / passed).toFixed(2))
+            data.local.posTotal = Number((data.local.pos.first * 100 / passed).toFixed(2))
+          } else if (data.period.big === 'PERIODO 2') {
+            if (posesion === 'local') {
+              data.local.pos.second += 1
+            } else {
+              data.visitor.pos.second += 1
+            }
+            data.visitor.posTotal = Number((data.visitor.pos.first * 100 / passed).toFixed(2))
+            data.local.posTotal = Number((data.local.pos.second * 100 / passed).toFixed(2))
+          } else if (data.period.big === 'OVERTIME') {
+            if (posesion === 'local') {
+              data.local.pos.third += 1
+            } else {
+              data.visitor.pos.third += 1
+            }
+            data.visitor.posTotal = Number((data.visitor.pos.first * 100 / passed).toFixed(2))
+            data.local.posTotal = Number((data.local.pos.third * 100 / passed).toFixed(2))
+          }
+          setUpdate(String(Math.random()))
+        }
+        if (Number(split[1]) === 0) {
+          if (Number(split[0]) === 0) {
+            split[0] = '0'
+            split[1] = '0'
+            setTimeRunning(false)
+            data.period.big = periods[(periods.indexOf(data.period.big) + 1)]
+            data.period.small = perSmall[periods.indexOf(data.period.big) + 1]
+            data.visitor.posTotal = 0
+            data.local.posTotal = 0
+          } else {
+            split[0] = String(Number(split[0]) - 1)
+            split[1] = '59'
+            ms = 60
+          }
+        } else {
+          split[1] = String(Number(split[1]) - 1)
+          ms = 60
+        }
+      }
+      time.innerHTML = `${Number(split[0]) < 10 ? '0' + Number(split[0]) : Number(split[0])}:${Number(split[1]) < 10 ? '0' + Number(split[1]) : Number(split[1])}`
+      data.time = `${Number(split[0]) < 10 ? '0' + Number(split[0]) : Number(split[0])}:${Number(split[1]) < 10 ? '0' + Number(split[1]) : Number(split[1])}`
+      const change = document.querySelector('#time')
+      if (change !== null) {
+        if (Number(split[0]) >= 1) {
+          change.innerHTML = `${Number(split[0]) < 10 ? '0' + Number(split[0]) : Number(split[0])}:${Number(split[1]) < 10 ? '0' + Number(split[1]) : Number(split[1])}`
+        } else {
+          change.innerHTML = `${Number(split[1]) < 10 ? '0' + Number(split[1]) : Number(split[1])}.${ms < 10 ? '0' + Number(ms) : ms}`
+        }
+      }
+    }
+  }
+
+  const shootHandler = (team:string) => {
+    setTeam(team)
+    if (team === 'local') {
+      if (data.period.big === 'PERIODO 1') {
+        data.local.shoots.first += 1
+        data.local.shootsTotal += 1
+      } else if (data.period.big === 'PERIODO 2') {
+        data.local.shoots.second += 1
+        data.local.shootsTotal += 1
+      } else if (data.period.big === 'OVERTIME') {
+        data.local.shoots.third += 1
+        data.local.shootsTotal += 1
+      }
+      setUpdate(String(Math.random()))
+    } else {
+      if (data.period.big === 'PERIODO 1') {
+        data.visitor.shoots.first += 1
+        data.visitor.shootsTotal += 1
+      } else if (data.period.big === 'PERIODO 2') {
+        data.visitor.shoots.second += 1
+        data.visitor.shootsTotal += 1
+      } else if (data.period.big === 'OVERTIME') {
+        data.visitor.shoots.third += 1
+        data.visitor.shootsTotal += 1
+      }
+      setUpdate(String(Math.random()))
+    }
+  }
+
+  const posesionHandler = (team:string) => {
+    setPosesion(team)
+    setUpdate(String(Math.random()))
+  }
+
+  const faultHandler = (team:string) => {
+    setTeam(team)
+    setModalType('fault')
+    openModal()
+  }
+
+  const openModal = () => {
+    setField1('')
+    setField2('')
+    setTimeRunning(false)
+    setView(true)
+  }
+
+  const goalHandler = (team:string) => {
+    setModalType('goal')
+    setTeam(team)
+    openModal()
+  }
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      timer()
+    }, 10)
+    const id2 = setInterval(() => {
+      exportData()
+    }, 1000)
+    return () => {
+      clearInterval(id)
+      clearInterval(id2)
+    }
+  }, [running, posesion])
+
+  const saqueHandler = (team:string) => {
+    if (team === 'local') {
+      if (data.period.big === 'PERIODO 1') {
+        data.local.saques.first += 1
+        data.local.saquesTotal += 1
+      } else if (data.period.big === 'PERIODO 2') {
+        data.local.saques.second += 1
+        data.local.saquesTotal += 1
+      } else if (data.period.big === 'OVERTIME') {
+        data.local.saques.third += 1
+        data.local.saquesTotal += 1
+      }
+      setUpdate(String(Math.random()))
+    } else {
+      if (data.period.big === 'PERIODO 1') {
+        data.visitor.saques.first += 1
+        data.visitor.saquesTotal += 1
+      } else if (data.period.big === 'PERIODO 2') {
+        data.visitor.saques.second += 1
+        data.visitor.saquesTotal += 1
+      } else if (data.period.big === 'OVERTIME') {
+        data.visitor.saques.third += 1
+        data.visitor.saquesTotal += 1
+      }
+      setUpdate(String(Math.random()))
+    }
+  }
+
+  const handleSave = () => {
+    if (modalType === 'clock') {
+      const time = document.querySelector('#realtime')
+      const change = document.querySelector('#time')
+      if (time === null || time === undefined || change === null) return
+      time.textContent = field1
+      change.innerHTML = field1
+    } else if (modalType === 'period') {
+      if (field1 === 'PERIODO 1' || field1 === 'PERIODO 2') {
+        const time = document.querySelector('#realtime')
+        const change = document.querySelector('#time')
+        if (time === null || time === undefined || change === null) return
+        time.textContent = '25:00'
+        change.innerHTML = '25:00'
+      } else if (field1 === 'OVERTIME') {
+        const time = document.querySelector('#realtime')
+        const change = document.querySelector('#time')
+        if (time === null || time === undefined || change === null) return
+        time.textContent = '05:00'
+        change.innerHTML = '05:00'
+      }
+      data.period.big = field1
+      data.period.small = perSmall[periods.indexOf(field1)]
+    } else if (modalType === 'goal') {
+      data.events.push({
+        type: 'goal',
+        team,
+        goal: field1,
+        assist: field2,
+        time: data.time,
+        period: data.period.small
+      })
+      if (team === 'local') {
+        if (data.period.big === 'PERIODO 1') {
+          data.local.goals.first += 1
+          data.local.shoots.first += 1
+        } else if (data.period.big === 'PERIODO 2') {
+          data.local.goals.second += 1
+          data.local.shoots.second += 1
+        } else if (data.period.big === 'OVERTIME') {
+          data.local.goals.third += 1
+          data.local.shoots.third += 1
+        }
+        data.local.goalsTotal += 1
+        data.local.shootsTotal += 1
+        let goal = ''
+        let assist = ''
+        if (field1 !== '') {
+          goal = getObjects(localPlayers, 'dorsal', field1)[0].name
+          for (let i = 0; i < localPlayers.length; i++) {
+            if (localPlayers[i].dorsal === field1) {
+              localPlayers[i].matchStats.g += 1
+            }
+          }
+        }
+        if (field2 !== '') {
+          assist = getObjects(localPlayers, 'dorsal', field2)[0].name
+          for (let i = 0; i < localPlayers.length; i++) {
+            if (localPlayers[i].dorsal === field2) {
+              localPlayers[i].matchStats.a += 1
+            }
+          }
+        }
+        if (data.localFault1 !== '') data.localFault1 = '00:00'
+        data.localString = 'GOAL: ' + goal + (field2 !== '' ? `, ASSIST: ${assist}` : '')
+      } else {
+        if (data.period.big === 'PERIODO 1') {
+          data.visitor.goals.first += 1
+          data.visitor.shoots.first += 1
+        } else if (data.period.big === 'PERIODO 2') {
+          data.visitor.goals.second += 1
+          data.visitor.shoots.second += 1
+        } else if (data.period.big === 'OVERTIME') {
+          data.visitor.goals.third += 1
+          data.visitor.shoots.third += 1
+        }
+        data.visitor.goalsTotal += 1
+        data.visitor.shootsTotal += 1
+        let goal = ''
+        let assist = ''
+        if (field1 !== '') {
+          goal = getObjects(visitorPlayers, 'dorsal', field1)[0].name
+          for (let i = 0; i < visitorPlayers.length; i++) {
+            if (visitorPlayers[i].dorsal === field1) {
+              visitorPlayers[i].matchStats.g += 1
+            }
+          }
+        }
+        if (field2 !== '') {
+          assist = getObjects(visitorPlayers, 'dorsal', field2)[0].name
+          for (let i = 0; i < visitorPlayers.length; i++) {
+            if (visitorPlayers[i].dorsal === field2) {
+              visitorPlayers[i].matchStats.a += 1
+            }
+          }
+        }
+        if (data.visitorFault1 !== '') data.visitorFault1 = '00:00'
+        data.visitorString = 'GOAL: ' + goal + (field2 !== '' ? `, ASSIST: ${assist}` : '')
+      }
+    } else if (modalType === 'fault') {
+      data.events.push({
+        type: 'fault',
+        team,
+        goal: field1,
+        assist: field2,
+        time: data.time,
+        period: data.period.small
+      })
+      if (team === 'local') {
+        if (data.period.big === 'PERIODO 1') {
+          data.local.faults.first += 1
+        } else if (data.period.big === 'PERIODO 2') {
+          data.local.faults.second += 1
+        } else if (data.period.big === 'OVERTIME') {
+          data.local.faults.third += 1
+        }
+        data.local.pimTotal += 2
+        if (data.localFault1 === '') {
+          data.localFault1 = '02:00'
+        } else if (data.localFault2 === '') {
+          data.localFault2 = '02:00'
+        }
+        if (data.local.players >= 3) data.local.players -= 1
+        for (let i = 0; i < localPlayers.length; i++) {
+          if (localPlayers[i].dorsal === field1) {
+            localPlayers[i].matchStats.pim += 2
+          }
+        }
+        data.localString = `${getObjects(localPlayers, 'dorsal', field1)[0].name}, FALTA: ${field2}`
+      } else if (team === 'visitor') {
+        if (data.period.big === 'PERIODO 1') {
+          data.visitor.faults.first += 1
+        } else if (data.period.big === 'PERIODO 2') {
+          data.visitor.faults.second += 1
+        } else if (data.period.big === 'OVERTIME') {
+          data.visitor.faults.third += 1
+        }
+        data.visitor.pimTotal += 2
+        if (data.visitorFault1 === '') {
+          data.visitorFault1 = '02:00'
+        } else if (data.visitorFault2 === '') {
+          data.visitorFault2 = '02:00'
+        }
+        for (let i = 0; i < visitorPlayers.length; i++) {
+          if (visitorPlayers[i].dorsal === field1) {
+            visitorPlayers[i].matchStats.pim += 2
+          }
+        }
+        if (data.visitor.players >= 3) data.visitor.players -= 1
+        data.visitorString = `${getObjects(visitorPlayers, 'dorsal', field1)[0].name}, FALTA: ${field2}`
+      }
+    }
+  }
+
+  let localPlayers = players.filter((a) => a.team.acronym === match.local.acronym)
+  localPlayers = localPlayers.sort((a, b) => Number(a.dorsal) - Number(b.dorsal))
+  let visitorPlayers = players.filter((a) => a.team.acronym === match.visitor.acronym)
+  visitorPlayers = visitorPlayers.sort((a, b) => Number(a.dorsal) - Number(b.dorsal))
+
+  return (
+    <div className='min-h-screen h-full bg-gray-300'>
+      <div id="realtime" className='hidden'>25:00</div>
+      <div className='hidden'>{update}</div>
+      {view && <div className='w-full h-full absolute z-10 bg-black/60 flex items-center justify-center'>
+          <div className={'flex flex-col items-center justify-start bg-white rounded ' + (modalType !== 'goal' && modalType !== 'fault' ? 'w-1/3' : 'w-1/2')}>
+            <div className='text-left w-full bg-[#013a54] text-white font-semibold inline-flex items-center justify-start px-2'>
+              <StorageIcon />
+              <span className='ml-1'>EDICION DE {modalType.toUpperCase()}...</span>
+            </div>
+            <div>
+              {modalType === 'clock' && <div className='mt-5'>
+                <input onChange={(e) => { setField1(e.target.value) }} className='bg-gray-300 p-2 rounded font-bold w-28 text-center text-2xl' defaultValue={document.querySelector('#realtime')?.textContent || ''} />
+              </div>}
+              {modalType === 'period' && <div className='mt-5'>
+                <Box sx={{ minWidth: 200 }}>
+                  <FormControl fullWidth>
+                    <InputLabel >Period</InputLabel>
+                    <Select
+                      value={field1}
+                      label="Periodo"
+                      onChange={(e) => { setField1(e.target.value) }}
+                    >
+                      {periods.map((m, i) => (
+                        <MenuItem key={'menuy' + i} value={m}>{m}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Box>
+              </div>}
+              {modalType === 'goal' &&
+                <div className='flex flex-col my-5'>
+                  <span className='font-bold py-2'>ANOTADOR</span>
+                  <div className=''>
+                    {team === 'local'
+                      ? localPlayers.map((player, i) => (
+                      <button onClick={() => { setField1(player.dorsal) }} className={'mx-1 px-2 py-0.5 rounded-lg ' + (field1 === player.dorsal ? 'bg-yellow-300' : 'bg-gray-300') } key={'pg' + i}>
+                        {player.dorsal}
+                      </button>
+                      ))
+                      : visitorPlayers.map((player, i) => (
+                        <button onClick={() => { setField1(player.dorsal) }} className={'mx-1 px-2 py-0.5 rounded-lg ' + (field1 === player.dorsal ? 'bg-yellow-300' : 'bg-gray-300') } key={'pg' + i}>
+                          {player.dorsal}
+                        </button>
+                      ))
+                      }
+                  </div>
+                  <span className='font-bold py-2'>ASSISTENCIA</span>
+                  <div className=''>
+                    {team === 'local'
+                      ? localPlayers.map((player, i) => (
+                        <button onClick={() => { setField2(player.dorsal) }} className={'mx-1 px-2 py-0.5 rounded-lg ' + (field2 === player.dorsal ? 'bg-yellow-300' : 'bg-gray-300') } key={'pg' + i}>
+                          {player.dorsal}
+                        </button>
+                      ))
+                      : visitorPlayers.map((player, i) => (
+                        <button onClick={() => { setField2(player.dorsal) }} className={'mx-1 px-2 py-0.5 rounded-lg ' + (field2 === player.dorsal ? 'bg-yellow-300' : 'bg-gray-300') } key={'pg' + i}>
+                          {player.dorsal}
+                        </button>
+                      ))
+                      }
+                  </div>
+                </div>
+              }{modalType === 'fault' &&
+              <div className='flex flex-col my-5'>
+                <span className='font-bold py-2'>JUGADOR</span>
+                <div className=''>
+                  {team === 'local'
+                    ? localPlayers.map((player, i) => (
+                    <button onClick={() => { setField1(player.dorsal) }} className={'mx-1 px-2 py-0.5 rounded-lg ' + (field1 === player.dorsal ? 'bg-yellow-300' : 'bg-gray-300') } key={'pg' + i}>
+                      {player.dorsal}
+                    </button>
+                    ))
+                    : visitorPlayers.map((player, i) => (
+                      <button onClick={() => { setField1(player.dorsal) }} className={'mx-1 px-2 py-0.5 rounded-lg ' + (field1 === player.dorsal ? 'bg-yellow-300' : 'bg-gray-300') } key={'pg' + i}>
+                        {player.dorsal}
+                      </button>
+                    ))
+                    }
+                </div>
+                <span className='font-bold py-2'>FALTA</span>
+                <div className=''>
+                  { faults.map((fault, i) => (
+                      <button onClick={() => { setField2(fault) }} className={'mx-1 px-2 py-0.5 rounded-lg ' + (field2 === fault ? 'bg-yellow-300' : 'bg-gray-300') } key={'pg' + i}>
+                        {fault}
+                      </button>
+                  ))
+                  }
+                </div>
+              </div>
+            }
+            </div>
+            <div className='inline-flex items-center justify-between w-5/6 p-5 text-white'>
+              <button onClick={() => { setView(false) }} className='mx-1.5 bg-gray-500 px-2 py-1 rounded-md inline-flex uppercase text-xs font-bold items-center justify-center hover:bg-gray-700 transition-all'>
+                <CancelIcon />
+                <span className='ml-1'>Cancelar</span>
+              </button>
+              <button onClick={() => { handleSave(); setView(false) }} className='mx-1.5 bg-blue-500 px-2 py-1 rounded-md inline-flex uppercase text-xs font-bold items-center justify-center hover:bg-blue-700 transition-all'>
+                <EditIcon />
+                <span className='ml-1'>Modificar</span>
+              </button>
+            </div>
+          </div>
+        </div>}
+      <div className='inline-flex flex-wrap w-full h-special-1 items-start justify-start'>
+        <TeamComponent selected={selected} team='local' match={match.local} players={localPlayers} playerSelected={localSelectedPlayer} setPlayerSelected={localPlayerHandler}/>
+        <div className='w-1/5 h-full flex flex-col items-start justify-start'>
+          <div className='w-full h-12 inline-flex items-center justify-center  bg-black'>
+            <ShootCounter shoots={data.local.shootsTotal}/>
+            <Score local={data.local.goalsTotal} visitor={data.visitor.goalsTotal} />
+            <ShootCounter shoots={data.visitor.shootsTotal}/>
+          </div>
+          <Time period={data.period.big} time={data.time} openModal={openModal} setModalType={setModalType} />
+          <div className='w-full border-t border-b bg-black flex flex-col text-white font-bold items-center justify-center'>
+            <span className='text-xl py-1'>SITUACION</span>
+            <div className='w-full inline-flex items-center justify-center border-t'>
+              <span className='w-1/2 text-center text-2xl'>{data.local.players}</span>
+              <span>VS</span>
+              <span className='w-1/2 text-center text-2xl'>{data.visitor.players}</span>
+            </div>
+          </div>
+          <div className='w-full border-t border-b bg-black flex flex-col text-white font-bold items-center justify-center'>
+            <span className='text-xl py-1'>SAQUES</span>
+            <div className='w-full inline-flex items-center justify-center border-t'>
+              <span className='w-1/2 text-center text-2xl border-r'>{data.local.saquesTotal}</span>
+              <span className='w-1/2 text-center text-2xl'>{data.visitor.saquesTotal}</span>
+            </div>
+          </div>
+          <div className='w-full border-t border-b bg-black flex flex-col text-white font-bold items-center justify-center'>
+            <span className='text-xl py-1'>POSESION</span>
+            <div className='w-full inline-flex items-center justify-center border-t'>
+              <span className='w-1/2 text-center text-2xl border-r'>{data.local.posTotal}%</span>
+              <span className='w-1/2 text-center text-2xl'>{data.visitor.posTotal}%</span>
+            </div>
+          </div>
+          <div className='w-full border-t border-b bg-black flex flex-col text-white font-bold items-center justify-center'>
+            <span className='text-xl py-1'>FALTAS</span>
+            <div className='w-full inline-flex items-center justify-center border-t'>
+              <div className='w-1/2 flex flex-col items-center justify-start border-r'>
+                <span className='w-full border-b text-center'>{data.localFault1}</span>
+                <span>{data.localFault2}</span>
+              </div>
+              <div className='w-1/2 flex flex-col items-center justify-start'>
+              <span className='w-full border-b text-center'>{data.visitorFault1}</span>
+                <span>{data.visitorFault2}</span>
+              </div>
+            </div>
+          </div>
+          <Selector selected={selected} setSelected={setSelected} />
+        </div>
+        <TeamComponent selected={selected} team='visitor' match={match.visitor} players={visitorPlayers} playerSelected={visitorSelectedPlayer} setPlayerSelected={visitorPlayerHandler}/>
+      </div>
+      <div className='h-[188px] absolute w-full bottom-0'>
+        <Buttons timeHandler={setTimeRunning} timeRunning={running} goalHandler={goalHandler} shootHandler={shootHandler} saqueHandler={saqueHandler} posesion={posesionHandler} faultHandler={faultHandler}/>
+      </div>
+    </div>
+  )
+}
+
+export const getServerSideProps: GetServerSideProps = async ({ res }) => {
+  let request = await fetch('https://api.cplv-tv.tk/app/players')
+  const players = await request.json()
+  request = await fetch('https://api.cplv-tv.tk/app/select')
+  const idp = Number(await request.json())
+  if (idp === 0 || players.length === 0) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false
+      }
+    }
+  }
+  request = await fetch('https://api.cplv-tv.tk/match')
+  let match = await request.json()
+  match = match.filter((a:any) => Number(a.idp) === idp)
+  if (match.length === 0) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false
+      }
+    }
+  }
+  match = match[0]
+  const league = (match.league.indexOf('-') !== -1 ? match.league.split('-')[0].trim() : match.league)
+  request = await fetch('https://api.cplv-tv.tk/league/small/' + league)
+  const data = await request.json()
+  match.local.name = getObjects(data, 'acronym', match.local.acronym)[0].name
+  match.visitor.name = getObjects(data, 'acronym', match.visitor.acronym)[0].name
+  return {
+    props: {
+      match,
+      players
+    }
+  }
+}
+
+function getObjects (obj:any, key:any, val:any) {
+  if (val.indexOf('-') !== -1) val = val.split('-')[0].trim()
+  let objects:any[] = []
+  for (const i in obj) {
+    if (typeof obj[i] === 'object') {
+      objects = objects.concat(getObjects(obj[i], key, val))
+    } else if ((i === key && obj[i] === val) || (i === key && val === '')) { //
+      objects.push(obj)
+    } else if (obj[i] === val && key === '') {
+      if (objects.lastIndexOf(obj) === -1) {
+        objects.push(obj)
+      }
+    }
+  }
+  return objects
+}
+
+export default Menu
