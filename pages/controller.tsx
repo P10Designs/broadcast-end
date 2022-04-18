@@ -23,16 +23,13 @@ const data:any = {
     small: '1st',
     big: 'PERIODO 1'
   },
-  localString: '',
-  visitorString: '',
-  localFault1: '',
-  localFault2: '',
-  visitorFault1: '',
-  visitorFault2: '',
-  localPlayerSelected: '',
-  visitorPlayerSelected: '',
   events: [],
   local: {
+    lineup: '',
+    fault1: '',
+    fault2: '',
+    string: '',
+    playerSelected: '',
     players: 4,
     goals: {
       first: 0,
@@ -66,6 +63,11 @@ const data:any = {
     pimTotal: 0
   },
   visitor: {
+    lineup: '',
+    fault1: '',
+    fault2: '',
+    string: '',
+    playerSelected: '',
     players: 4,
     goals: {
       first: 0,
@@ -116,12 +118,12 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
 
   const localPlayerHandler = (row: Player) => {
     setLocalSelectedPlayer(row)
-    data.localPlayerSelected = row
+    data.local.playerSelected = row
   }
 
   const visitorPlayerHandler = (row: Player) => {
     setVisitorSelectedPlayer(row)
-    data.visitorPlayerSelected = row
+    data.visitor.playerSelected = row
   }
 
   const exportData = async () => {
@@ -157,19 +159,19 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
       if (ms !== 0) {
         ms -= 1
       } else if (time !== undefined) {
-        if (data.localFault1 !== '' || data.localFault2 !== '') {
-          if (data.localFault1 !== '') {
-            const fault1 = data.localFault1.split(':')
+        if (data.local.fault1 !== '' || data.local.fault2 !== '') {
+          if (data.local.fault1 !== '') {
+            const fault1 = data.local.fault1.split(':')
             let update = true
             if (Number(fault1[1]) === 0) {
               if (Number(fault1[0]) === 0) {
-                if (data.localFault2 !== '') {
+                if (data.local.fault2 !== '') {
                   update = false
-                  data.localFault1 = data.localFault2
+                  data.local.fault1 = data.local.fault2
                   data.local.players += 1
-                  data.localFault2 = ''
+                  data.local.fault2 = ''
                 } else {
-                  data.localFault1 = ''
+                  data.local.fault1 = ''
                 }
               } else {
                 fault1[0] = String(Number(fault1[0]) - 1)
@@ -178,14 +180,14 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
             } else {
               fault1[1] = String(Number(fault1[1]) - 1)
             }
-            if (update) data.localFault1 = `${Number(fault1[0]) < 10 ? '0' + Number(fault1[0]) : Number(fault1[0])}:${Number(fault1[1]) < 10 ? '0' + Number(fault1[1]) : Number(fault1[1])}`
+            if (update) data.local.fault1 = `${Number(fault1[0]) < 10 ? '0' + Number(fault1[0]) : Number(fault1[0])}:${Number(fault1[1]) < 10 ? '0' + Number(fault1[1]) : Number(fault1[1])}`
             setUpdate(String(Math.random()))
           }
-          if (data.localFault2 !== '') {
-            const fault2 = data.localFault2.split(':')
+          if (data.local.fault2 !== '') {
+            const fault2 = data.local.fault2.split(':')
             if (Number(fault2[1]) === 0) {
               if (Number(fault2[0]) === 0) {
-                data.localFault2 = ''
+                data.local.fault2 = ''
               } else {
                 fault2[0] = String(Number(fault2[0]) - 1)
                 fault2[1] = '59'
@@ -193,23 +195,23 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
             } else {
               fault2[1] = String(Number(fault2[1]) - 1)
             }
-            data.localFault2 = `${Number(fault2[0]) < 10 ? '0' + Number(fault2[0]) : Number(fault2[0])}:${Number(fault2[1]) < 10 ? '0' + Number(fault2[1]) : Number(fault2[1])}`
+            data.local.fault2 = `${Number(fault2[0]) < 10 ? '0' + Number(fault2[0]) : Number(fault2[0])}:${Number(fault2[1]) < 10 ? '0' + Number(fault2[1]) : Number(fault2[1])}`
             setUpdate(String(Math.random()))
           }
         }
-        if (data.visitorFault1 !== '' || data.visitorFault2 !== '') {
-          if (data.visitorFault1 !== '') {
-            const fault1 = data.visitorFault1.split(':')
+        if (data.visitor.fault1 !== '' || data.visitor.fault2 !== '') {
+          if (data.visitor.fault1 !== '') {
+            const fault1 = data.visitor.fault1.split(':')
             let update = true
             if (Number(fault1[1]) === 0) {
               if (Number(fault1[0]) === 0) {
-                if (data.visitorFault2 !== '') {
+                if (data.visitor.fault2 !== '') {
                   update = false
-                  data.visitorFault1 = data.visitorFault2
+                  data.visitor.fault1 = data.visitor.fault2
                   data.visitor.players += 1
-                  data.visitorFault2 = ''
+                  data.visitor.fault2 = ''
                 } else {
-                  data.visitorFault1 = ''
+                  data.visitor.fault1 = ''
                 }
               } else {
                 fault1[0] = String(Number(fault1[0]) - 1)
@@ -218,14 +220,14 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
             } else {
               fault1[1] = String(Number(fault1[1]) - 1)
             }
-            if (update) data.visitorFault1 = `${Number(fault1[0]) < 10 ? '0' + Number(fault1[0]) : Number(fault1[0])}:${Number(fault1[1]) < 10 ? '0' + Number(fault1[1]) : Number(fault1[1])}`
+            if (update) data.visitor.fault1 = `${Number(fault1[0]) < 10 ? '0' + Number(fault1[0]) : Number(fault1[0])}:${Number(fault1[1]) < 10 ? '0' + Number(fault1[1]) : Number(fault1[1])}`
             setUpdate(String(Math.random()))
           }
-          if (data.visitorFault2 !== '') {
-            const fault2 = data.visitorFault2.split(':')
+          if (data.visitor.fault2 !== '') {
+            const fault2 = data.visitor.fault2.split(':')
             if (Number(fault2[1]) === 0) {
               if (Number(fault2[0]) === 0) {
-                data.visitorFault2 = ''
+                data.visitor.fault2 = ''
               } else {
                 fault2[0] = String(Number(fault2[0]) - 1)
                 fault2[1] = '59'
@@ -233,7 +235,7 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
             } else {
               fault2[1] = String(Number(fault2[1]) - 1)
             }
-            data.visitorFault2 = `${Number(fault2[0]) < 10 ? '0' + Number(fault2[0]) : Number(fault2[0])}:${Number(fault2[1]) < 10 ? '0' + Number(fault2[1]) : Number(fault2[1])}`
+            data.visitor.fault2 = `${Number(fault2[0]) < 10 ? '0' + Number(fault2[0]) : Number(fault2[0])}:${Number(fault2[1]) < 10 ? '0' + Number(fault2[1]) : Number(fault2[1])}`
             setUpdate(String(Math.random()))
           }
         }
@@ -456,8 +458,8 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
             }
           }
         }
-        if (data.localFault1 !== '') data.localFault1 = '00:00'
-        data.localString = 'GOAL: ' + goal + (field2 !== '' ? `, ASSIST: ${assist}` : '')
+        if (data.local.fault1 !== '') data.local.fault1 = '00:00'
+        data.local.string = 'GOAL: ' + goal + (field2 !== '' ? `, ASSIST: ${assist}` : '')
       } else {
         if (data.period.big === 'PERIODO 1') {
           data.visitor.goals.first += 1
@@ -489,8 +491,8 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
             }
           }
         }
-        if (data.visitorFault1 !== '') data.visitorFault1 = '00:00'
-        data.visitorString = 'GOAL: ' + goal + (field2 !== '' ? `, ASSIST: ${assist}` : '')
+        if (data.visitor.fault1 !== '') data.visitor.fault1 = '00:00'
+        data.visitor.string = 'GOAL: ' + goal + (field2 !== '' ? `, ASSIST: ${assist}` : '')
       }
     } else if (modalType === 'fault') {
       data.events.push({
@@ -510,10 +512,10 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
           data.local.faults.third += 1
         }
         data.local.pimTotal += 2
-        if (data.localFault1 === '') {
-          data.localFault1 = '02:00'
-        } else if (data.localFault2 === '') {
-          data.localFault2 = '02:00'
+        if (data.local.fault1 === '') {
+          data.local.fault1 = '02:00'
+        } else if (data.local.fault2 === '') {
+          data.local.fault2 = '02:00'
         }
         if (data.local.players >= 3) data.local.players -= 1
         for (let i = 0; i < localPlayers.length; i++) {
@@ -521,7 +523,7 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
             localPlayers[i].matchStats.pim += 2
           }
         }
-        data.localString = `${getObjects(localPlayers, 'dorsal', field1)[0].name}, FALTA: ${field2}`
+        data.local.string = `${getObjects(localPlayers, 'dorsal', field1)[0].name}, FALTA: ${field2}`
       } else if (team === 'visitor') {
         if (data.period.big === 'PERIODO 1') {
           data.visitor.faults.first += 1
@@ -531,10 +533,10 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
           data.visitor.faults.third += 1
         }
         data.visitor.pimTotal += 2
-        if (data.visitorFault1 === '') {
-          data.visitorFault1 = '02:00'
-        } else if (data.visitorFault2 === '') {
-          data.visitorFault2 = '02:00'
+        if (data.visitor.fault1 === '') {
+          data.visitor.fault1 = '02:00'
+        } else if (data.visitor.fault2 === '') {
+          data.visitor.fault2 = '02:00'
         }
         for (let i = 0; i < visitorPlayers.length; i++) {
           if (visitorPlayers[i].dorsal === field1) {
@@ -542,7 +544,7 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
           }
         }
         if (data.visitor.players >= 3) data.visitor.players -= 1
-        data.visitorString = `${getObjects(visitorPlayers, 'dorsal', field1)[0].name}, FALTA: ${field2}`
+        data.visitor.string = `${getObjects(visitorPlayers, 'dorsal', field1)[0].name}, FALTA: ${field2}`
       }
     }
   }
@@ -551,7 +553,12 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
   localPlayers = localPlayers.sort((a, b) => Number(a.dorsal) - Number(b.dorsal))
   let visitorPlayers = players.filter((a) => a.team.acronym === match.visitor.acronym)
   visitorPlayers = visitorPlayers.sort((a, b) => Number(a.dorsal) - Number(b.dorsal))
-
+  localPlayers.forEach((p) => {
+    data.local.lineup += `${p.dorsal}.- ${p.name}`
+  })
+  visitorPlayers.forEach((p) => {
+    data.visitor.lineup += `${p.dorsal}.- ${p.name}`
+  })
   return (
     <div className='min-h-screen h-full bg-gray-300'>
       <div id="realtime" className='hidden'>25:00</div>
@@ -691,12 +698,12 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
             <span className='text-xl py-1'>FALTAS</span>
             <div className='w-full inline-flex items-center justify-center border-t'>
               <div className='w-1/2 flex flex-col items-center justify-start border-r'>
-                <span className='w-full border-b text-center'>{data.localFault1}</span>
-                <span>{data.localFault2}</span>
+                <span className='w-full border-b text-center'>{data.local.fault1}</span>
+                <span>{data.local.fault2}</span>
               </div>
               <div className='w-1/2 flex flex-col items-center justify-start'>
-              <span className='w-full border-b text-center'>{data.visitorFault1}</span>
-                <span>{data.visitorFault2}</span>
+              <span className='w-full border-b text-center'>{data.visitor.fault1}</span>
+                <span>{data.visitor.fault2}</span>
               </div>
             </div>
           </div>
