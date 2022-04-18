@@ -7,6 +7,7 @@ import Image from 'next/image'
 import EditIcon from '@mui/icons-material/Edit'
 import CancelIcon from '@mui/icons-material/Cancel'
 import StorageIcon from '@mui/icons-material/Storage'
+import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
 import { Autocomplete, TextField } from '@mui/material'
 
@@ -68,6 +69,13 @@ const Lineup: NextPage<LineupProps> = ({ match, players }) => {
     await update()
   }
 
+  const deletePlayer = () => {
+    let toEdit = playersArray
+    toEdit = playersArray.filter(e => e.name !== player.name)
+    setPlayersArray(toEdit)
+    saveData()
+  }
+
   const update = async () => {
     console.log(playersArray)
     await fetch('https://api.cplv-tv.tk/app/players', {
@@ -116,6 +124,10 @@ const Lineup: NextPage<LineupProps> = ({ match, players }) => {
               </div>
             }
             <div className='inline-flex items-center justify-between w-5/6 p-5 text-white'>
+              <button onClick={() => { setView(false), deletePlayer() }} className='mx-1.5 bg-red-500 px-2 py-1 rounded-md inline-flex uppercase text-xs font-bold items-center justify-center hover:bg-red-700 transition-all'>
+                <DeleteIcon />
+                <span className='ml-1'>Eliminar</span>
+              </button>
               <button onClick={() => { setView(false) }} className='mx-1.5 bg-gray-500 px-2 py-1 rounded-md inline-flex uppercase text-xs font-bold items-center justify-center hover:bg-gray-700 transition-all'>
                 <CancelIcon />
                 <span className='ml-1'>Cancelar</span>
