@@ -1,11 +1,5 @@
 {
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
-  "/": "pages/index.js",
-  "/lineup": "pages/lineup.js",
-  "/controller": "pages/controller.js",
-  "/menu": "pages/menu.js",
-  "/casters": "pages/casters.js",
-  "/_document": "pages/_document.js",
-  "/404": "pages/404.html"
+  "/_document": "pages/_document.js"
 }

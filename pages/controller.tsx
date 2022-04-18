@@ -554,10 +554,10 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
   let visitorPlayers = players.filter((a) => a.team.acronym === match.visitor.acronym)
   visitorPlayers = visitorPlayers.sort((a, b) => Number(a.dorsal) - Number(b.dorsal))
   localPlayers.forEach((p) => {
-    data.local.lineup += `${p.dorsal}.- ${p.name}`
+    data.local.lineup += `${p.dorsal}.- ${p.name}\n`
   })
   visitorPlayers.forEach((p) => {
-    data.visitor.lineup += `${p.dorsal}.- ${p.name}`
+    data.visitor.lineup += `${p.dorsal}.- ${p.name}\n`
   })
   return (
     <div className='min-h-screen h-full bg-gray-300'>

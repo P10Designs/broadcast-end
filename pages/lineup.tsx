@@ -47,7 +47,7 @@ const Lineup: NextPage<LineupProps> = ({ match, players }) => {
   }, [])
 
   const saveData = async () => {
-    let original = players
+    let original = playersArray
     for (let i = 0; i < original.length; i++) {
       const playerIn = original[i]
       if (player !== undefined) {
@@ -69,11 +69,16 @@ const Lineup: NextPage<LineupProps> = ({ match, players }) => {
     await update()
   }
 
-  const deletePlayer = () => {
+  const deletePlayer = async () => {
     let toEdit = playersArray
-    toEdit = playersArray.filter(e => e.name !== player.name)
-    setPlayersArray(toEdit)
-    saveData()
+    if (player !== undefined) {
+      toEdit = toEdit.filter((e) => {
+        console.log(e.name, player.name, e.name !== player.name)
+        return e.name !== player.name
+      })
+      setPlayersArray(toEdit)
+      await update()
+    }
   }
 
   const update = async () => {
@@ -124,7 +129,7 @@ const Lineup: NextPage<LineupProps> = ({ match, players }) => {
               </div>
             }
             <div className='inline-flex items-center justify-between w-5/6 p-5 text-white'>
-              <button onClick={() => { setView(false), deletePlayer() }} className='mx-1.5 bg-red-500 px-2 py-1 rounded-md inline-flex uppercase text-xs font-bold items-center justify-center hover:bg-red-700 transition-all'>
+              <button onClick={() => { setView(false); deletePlayer() }} className='mx-1.5 bg-red-500 px-2 py-1 rounded-md inline-flex uppercase text-xs font-bold items-center justify-center hover:bg-red-700 transition-all'>
                 <DeleteIcon />
                 <span className='ml-1'>Eliminar</span>
               </button>
@@ -224,6 +229,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, res }) =>
   match = match[0]
   const league = (match.league.indexOf('-') !== -1 ? match.league.split('-')[0].trim() : match.league)
   request = await fetch('https://api.cplv-tv.tk/league/' + league)
+  console.log(league)
   const data = await request.json()
   if (players.length === 0) {
     players = data.players
