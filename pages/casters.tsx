@@ -352,7 +352,7 @@ const Casters: NextPage<MenuProps> = ({ match }) => {
                       </td>
                       <td className='flex flex-col items-start justify-center h-full'>
                         <span className={'font-bold text-sm ' + (e.type === 'goal' ? 'text-[#0087bd]' : 'text-[#ff0101]')}>{e.type.toUpperCase()} {e.team === 'local' ? match.local.name : match.visitor.name }</span>
-                        <span className='text-sm'>Gol: (#{e.goal}) {getObjects((e.team === 'local' ? localPlayers : visitorPlayers), 'dorsal', e.goal)[0].name}</span>
+                        <span className='text-sm'>{e.type === 'goal' ? 'GOL:' : 'FALTA:'}: (#{e.goal}) {getObjects((e.team === 'local' ? localPlayers : visitorPlayers), 'dorsal', e.goal)[0].name}</span>
                         <span className='text-sm'>{e.type === 'fault' ? `Type: ${e.assist}` : `Assist: ${getObjects((e.team === 'local' ? localPlayers : visitorPlayers), 'dorsal', e.assist)[0].name}` }</span>
                       </td>
                     </tr>

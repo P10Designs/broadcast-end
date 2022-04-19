@@ -19,6 +19,7 @@ interface MenuProps{
 
 const data:any = {
   time: '25:00',
+  situation: 'normal',
   period: {
     small: '1st',
     big: 'PERIODO 1'
@@ -443,7 +444,8 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
         let goal = ''
         let assist = ''
         if (field1 !== '') {
-          goal = getObjects(localPlayers, 'dorsal', field1)[0].name
+          const split = getObjects(localPlayers, 'dorsal', field1)[0].name.split(',')
+          goal = `${split[1]} ${split[0].split(' ')[0]}`
           for (let i = 0; i < localPlayers.length; i++) {
             if (localPlayers[i].dorsal === field1) {
               localPlayers[i].matchStats.g += 1
@@ -451,7 +453,8 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
           }
         }
         if (field2 !== '') {
-          assist = getObjects(localPlayers, 'dorsal', field2)[0].name
+          const split = getObjects(localPlayers, 'dorsal', field2)[0].name.split(',')
+          assist = `${split[1]} ${split[0].split(' ')[0]}`
           for (let i = 0; i < localPlayers.length; i++) {
             if (localPlayers[i].dorsal === field2) {
               localPlayers[i].matchStats.a += 1
@@ -459,7 +462,7 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
           }
         }
         if (data.local.fault1 !== '') data.local.fault1 = '00:00'
-        data.local.string = 'GOAL: ' + goal + (field2 !== '' ? `, ASSIST: ${assist}` : '')
+        data.local.string = 'G: ' + goal + (field2 !== '' ? `, A: ${assist}` : '')
       } else {
         if (data.period.big === 'PERIODO 1') {
           data.visitor.goals.first += 1
@@ -476,7 +479,8 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
         let goal = ''
         let assist = ''
         if (field1 !== '') {
-          goal = getObjects(visitorPlayers, 'dorsal', field1)[0].name
+          const split = getObjects(visitorPlayers, 'dorsal', field1)[0].name.split(',')
+          goal = `${split[1]} ${split[0].split(' ')[0]}`
           for (let i = 0; i < visitorPlayers.length; i++) {
             if (visitorPlayers[i].dorsal === field1) {
               visitorPlayers[i].matchStats.g += 1
@@ -484,7 +488,8 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
           }
         }
         if (field2 !== '') {
-          assist = getObjects(visitorPlayers, 'dorsal', field2)[0].name
+          const split = getObjects(visitorPlayers, 'dorsal', field2)[0].name.split(',')
+          assist = `${split[1]} ${split[0].split(' ')[0]}`
           for (let i = 0; i < visitorPlayers.length; i++) {
             if (visitorPlayers[i].dorsal === field2) {
               visitorPlayers[i].matchStats.a += 1
@@ -492,7 +497,7 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
           }
         }
         if (data.visitor.fault1 !== '') data.visitor.fault1 = '00:00'
-        data.visitor.string = 'GOAL: ' + goal + (field2 !== '' ? `, ASSIST: ${assist}` : '')
+        data.visitor.string = 'G: ' + goal + (field2 !== '' ? `, A: ${assist}` : '')
       }
     } else if (modalType === 'fault') {
       data.events.push({
@@ -518,12 +523,16 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
           data.local.fault2 = '02:00'
         }
         if (data.local.players >= 3) data.local.players -= 1
+        if (data.local.players === 4 && data.visitor.players === 4) data.situation = 'POWERPLAY'
+        else data.situation = data.local.players + ' vs ' + data.visitor.players
         for (let i = 0; i < localPlayers.length; i++) {
           if (localPlayers[i].dorsal === field1) {
             localPlayers[i].matchStats.pim += 2
           }
         }
-        data.local.string = `${getObjects(localPlayers, 'dorsal', field1)[0].name}, FALTA: ${field2}`
+        const split = getObjects(localPlayers, 'dorsal', field1)[0].name.split(',')
+        const fault = `${split[1]} ${split[0].split(' ')[0]}`
+        data.local.string = `${fault}, F: ${field2}`
       } else if (team === 'visitor') {
         if (data.period.big === 'PERIODO 1') {
           data.visitor.faults.first += 1
@@ -544,7 +553,11 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
           }
         }
         if (data.visitor.players >= 3) data.visitor.players -= 1
-        data.visitor.string = `${getObjects(visitorPlayers, 'dorsal', field1)[0].name}, FALTA: ${field2}`
+        if (data.local.players === 4 && data.visitor.players === 4) data.situation = 'POWERPLAY'
+        else data.situation = data.local.players + ' vs ' + data.visitor.players
+        const split = getObjects(visitorPlayers, 'dorsal', field1)[0].name.split(',')
+        const fault = `${split[1]} ${split[0].split(' ')[0]}`
+        data.visitor.string = `${fault}, F: ${field2}`
       }
     }
   }
