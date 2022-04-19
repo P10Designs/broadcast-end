@@ -991,7 +991,8 @@ const Casters = ({ match  })=>{
                                                                 /*#__PURE__*/ (0,jsx_runtime_.jsxs)("span", {
                                                                     className: "text-sm",
                                                                     children: [
-                                                                        "Gol: (#",
+                                                                        e.type === "goal" ? "GOL:" : "FALTA:",
+                                                                        ": (#",
                                                                         e.goal,
                                                                         ") ",
                                                                         getObjects(e.team === "local" ? localPlayers : visitorPlayers, "dorsal", e.goal)[0].name
