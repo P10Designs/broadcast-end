@@ -26,7 +26,8 @@ const data:any = {
   },
   events: [],
   local: {
-    lineup: '',
+    lineup1: undefined,
+    lineup2: undefined,
     fault1: '',
     fault2: '',
     string: '',
@@ -64,7 +65,8 @@ const data:any = {
     pimTotal: 0
   },
   visitor: {
-    lineup: '',
+    lineup1: undefined,
+    lineup2: undefined,
     fault1: '',
     fault2: '',
     string: '',
@@ -566,12 +568,29 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
   localPlayers = localPlayers.sort((a, b) => Number(a.dorsal) - Number(b.dorsal))
   let visitorPlayers = players.filter((a) => a.team.acronym === match.visitor.acronym)
   visitorPlayers = visitorPlayers.sort((a, b) => Number(a.dorsal) - Number(b.dorsal))
-  localPlayers.forEach((p) => {
-    data.local.lineup += `${p.dorsal}.- ${p.name}\n`
-  })
-  visitorPlayers.forEach((p) => {
-    data.visitor.lineup += `${p.dorsal}.- ${p.name}\n`
-  })
+  if (data.local.lineup1 === undefined) {
+    data.local.lineup1 = ''
+    data.local.lineup2 = ''
+    localPlayers.forEach((p, i) => {
+      if (i < 13) {
+        data.local.lineup1 += `${p.dorsal}.- ${p.name}${p.position ? ` (${p.position})` : ''}\n`
+      } else {
+        data.local.lineup2 += `${p.dorsal}.- ${p.name}\n`
+      }
+    })
+  }
+  if (data.visitor.lineup1 === undefined) {
+    data.visitor.lineup1 = ''
+    data.visitor.lineup2 = ''
+    visitorPlayers.forEach((p, i) => {
+      if (i < 13) {
+        data.visitor.lineup1 += `${p.dorsal}.- ${p.name}${p.position ? ` (${p.position})` : ''}\n`
+      } else {
+        data.visitor.lineup2 += `${p.dorsal}.- ${p.name}\n`
+      }
+    })
+  }
+
   return (
     <div className='min-h-screen h-full bg-gray-300'>
       <div id="realtime" className='hidden'>25:00</div>
