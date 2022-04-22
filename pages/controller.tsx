@@ -572,9 +572,7 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
     data.local.lineup1 = ''
     data.local.lineup2 = ''
     localPlayers.forEach((p, i) => {
-      p.name = p.name.toLowerCase()
-      p.name = `${p.name.split(',')[1]} ${p.name.split(',')[0].split(' ')[0]}`
-      p.name = p.name.replace(/\b\w/g, c => c.toUpperCase())
+      p.name = `${p.name.split(',')[1]} ${p.name.split(',')[0]}`.trim().toLowerCase().split(' ').map((e) => e[0].toUpperCase() + e.substr(1)).join(' ')
       if (i < 13) {
         data.local.lineup1 += `${p.dorsal}.- ${p.name}${p.position ? ` (${p.position})` : ''}\n`
       } else {
@@ -586,14 +584,12 @@ const Menu: NextPage<MenuProps> = ({ match, players }) => {
     data.visitor.lineup1 = ''
     data.visitor.lineup2 = ''
     visitorPlayers.forEach((p, i) => {
-      p.name = p.name.toLowerCase()
-      p.name = `${p.name.split(',')[1]} ${p.name.split(',')[0].split(' ')[0]}`
-      p.name = p.name.replace(/\b\w/g, c => c.toUpperCase())
+      p.name = `${p.name.split(',')[1]} ${p.name.split(',')[0]}`.trim().toLowerCase().split(' ').map((e) => e[0].toUpperCase() + e.substr(1)).join(' ')
       console.log(p.name)
       if (i < 13) {
         data.visitor.lineup1 += `${p.dorsal}.- ${p.name}${p.position ? ` (${p.position})` : ''}`
-        if (i<12){
-          data.visitor.lineup1+= ' \n'
+        if (i < 12) {
+          data.visitor.lineup1 += ' \n'
         }
       } else {
         data.visitor.lineup2 += `${p.dorsal}.- ${p.name}${p.position ? ` (${p.position})` : ''}\n`
