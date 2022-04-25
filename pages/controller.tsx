@@ -1,6 +1,6 @@
 import { Match, Player } from 'constants/interfaces'
 import type { GetServerSideProps, NextPage } from 'next'
-import { TeamComponent, ShootCounter, Score, Time, Selector, Buttons } from 'Components/Controller'
+import { TeamComponent, ShootCounter, Score, Time, Selector, Buttons } from 'components/Controller'
 import { useEffect, useState } from 'react'
 import StorageIcon from '@mui/icons-material/Storage'
 import EditIcon from '@mui/icons-material/Edit'

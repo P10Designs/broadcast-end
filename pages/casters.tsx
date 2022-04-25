@@ -1,15 +1,15 @@
-import Header from 'Components/Header'
+import Header from 'components/Header'
 import { Match } from 'constants/interfaces'
 import type { GetServerSideProps, NextPage } from 'next'
-import MatchHeader from 'Components/MatchHeader'
+import MatchHeader from 'components/MatchHeader'
 import Image from 'next/image'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import CloseIcon from '@mui/icons-material/Close'
 import { useEffect, useState } from 'react'
 import { getObjects } from 'Functions/Reusable'
-import TeamTable from 'Components/Casters/TeamTable'
-import CastersHeader from 'Components/Casters/CastersHeader'
-import { Shoots, Possesion, Sancion } from 'Components/Casters/Widgets'
+import TeamTable from 'components/Casters/TeamTable'
+import CastersHeader from 'components/Casters/CastersHeader'
+import { Shoots, Possesion, Sancion } from 'components/Casters/Widgets'
 interface MenuProps{
   match: Match,
 }

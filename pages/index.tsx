@@ -1,8 +1,9 @@
-import Header from 'Components/Header'
-import LeagueTable from 'Components/Index/LeagueTable'
+import Header from 'components/Header'
+import LeagueTable from 'components/Index/LeagueTable'
 import { Match } from 'constants/interfaces'
 import type { GetServerSideProps, NextPage } from 'next'
 import { useState } from 'react'
+
 interface HomeProps{
   matches: Match[],
   leagues: string[],
@@ -13,15 +14,15 @@ const Home: NextPage<HomeProps> = ({ matches, leagues, idp }) => {
   const [selected, setSelected] = useState(idp)
   if (matches.length === 0) {
     return (
-      <div className='flex flex-col h-full w-full bg-[#f1f1f1]'>
+      <div className='flex flex-col h-full w-full'>
         <Header />
         <h1 className='text-center w-full text-3xl font-bold mt-10'>NO MATCHES ARE SELECTABLE</h1>
       </div>
     )
   }
   return (
-    <div className='flex flex-col h-full w-full bg-[#f1f1f1'>
-      <Header />
+    <div className='flex flex-col h-full w-full'>
+     <Header />
       <div className='flex flex-col items-center justify-center'>
         {leagues?.map((league, _i) =>
           <LeagueTable league={league} key={'league' + _i} matches={matches} setSelected={setSelected} selected={selected} />

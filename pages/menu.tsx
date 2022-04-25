@@ -1,11 +1,11 @@
-import Header from 'Components/Header'
+import Header from 'components/Header'
 import { Match } from 'constants/interfaces'
 import type { GetServerSideProps, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import SupportAgentIcon from '@mui/icons-material/SupportAgent'
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount'
 import SettingsRemoteIcon from '@mui/icons-material/SettingsRemote'
-import MatchHeader from 'Components/MatchHeader'
+import MatchHeader from 'components/MatchHeader'
 import { getObjects } from 'Functions/Reusable'
 
 interface MenuProps{
