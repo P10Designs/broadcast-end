@@ -6,12 +6,14 @@ import SupportAgentIcon from '@mui/icons-material/SupportAgent'
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount'
 import SettingsRemoteIcon from '@mui/icons-material/SettingsRemote'
 import MatchHeader from 'Components/MatchHeader'
+import { getObjects } from 'Functions/Reusable'
 
 interface MenuProps{
   match: Match,
 }
 
 const Menu: NextPage<MenuProps> = ({ match }) => {
+  const buttonClass = 'min-w-[150px] p-5 hover:scale-110 transition-all m-5 bg-[#0078b2] rounded-xl text-white flex flex-col items-center justify-center font-bold'
   const router = useRouter()
   return (
     <div className='min-h-screen h-full bg-gray-300'>
@@ -19,7 +21,7 @@ const Menu: NextPage<MenuProps> = ({ match }) => {
       <MatchHeader match={match} />
       <div className='inline-flex flex-wrap w-full h-full items-center justify-center p-10'>
         <button
-          className='min-w-[150px] p-5 hover:scale-110 transition-all m-5 bg-[#0078b2] rounded-xl text-white flex flex-col items-center justify-center font-bold'
+          className={buttonClass}
           onClick={() => {
             router.push('/casters')
           }}>
@@ -27,7 +29,7 @@ const Menu: NextPage<MenuProps> = ({ match }) => {
           <span>CASTERS</span>
         </button>
         <button
-          className='min-w-[150px] p-5 m-5 hover:scale-110 transition-all bg-[#0078b2] rounded-xl text-white flex flex-col items-center justify-center font-bold'
+          className={buttonClass}
           onClick={() => {
             router.push('/lineup')
           }}>
@@ -35,7 +37,7 @@ const Menu: NextPage<MenuProps> = ({ match }) => {
           <span>ALINEACIONES</span>
         </button>
         <button
-          className='min-w-[150px] p-5 m-5 hover:scale-110 transition-all bg-[#0078b2] rounded-xl text-white flex flex-col items-center justify-center font-bold'
+          className={buttonClass}
           onClick={() => {
             router.push('/controller')
           }}>
@@ -80,23 +82,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params, res }) =>
       match: match
     }
   }
-}
-
-function getObjects (obj:any, key:any, val:any) {
-  if (val.indexOf('-') !== -1) val = val.split('-')[0].trim()
-  let objects:any[] = []
-  for (const i in obj) {
-    if (typeof obj[i] === 'object') {
-      objects = objects.concat(getObjects(obj[i], key, val))
-    } else if ((i === key && obj[i] === val) || (i === key && val === '')) { //
-      objects.push(obj)
-    } else if (obj[i] === val && key === '') {
-      if (objects.lastIndexOf(obj) === -1) {
-        objects.push(obj)
-      }
-    }
-  }
-  return objects
 }
 
 export default Menu
