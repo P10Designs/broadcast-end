@@ -18,7 +18,7 @@ const CastersHeader: FC<CastersHeaderInterface> = ({ match, period, time }) => (
       </div>
     </div>
     <div className='flex flex-col items-center justify-center'>
-      <span className='font-semibold'>{period}</span>
+      <span className='font-semibold'>{period?.big}</span>
       <span className='font-bold text-4xl'>{time}</span>
     </div>
     <div className='inline-flex items-center justify-center mx-10'>
