@@ -13,7 +13,7 @@ const Home: NextPage<HomeProps> = ({ matches, leagues, idp }) => {
   const [selected, setSelected] = useState(idp)
   if (matches.length === 0) {
     return (
-      <div className='flex flex-col h-full w-full bg-[#f1f1f1'>
+      <div className='flex flex-col h-full w-full bg-[#f1f1f1]'>
         <Header />
         <h1 className='text-center w-full text-3xl font-bold mt-10'>NO MATCHES ARE SELECTABLE</h1>
       </div>
