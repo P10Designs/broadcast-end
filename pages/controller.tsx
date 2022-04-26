@@ -121,7 +121,7 @@ const Controller: NextPage<ControllerProps> = ({ match, playerList }) => {
   const [team, setTeam] = useState('')
   const [posesion, setPosesion] = useState('')
   const [update, setUpdate] = useState('')
-  let ms = 1000
+  let ms = 99
 
   const playerHandler = (row: Player, team:string) => {
     if (team === 'local') {
@@ -168,6 +168,7 @@ const Controller: NextPage<ControllerProps> = ({ match, playerList }) => {
       const time = document.querySelector('#realtime')
       if (time === null || time === undefined || time.textContent === null) return
       const split = time.textContent.split(':')
+      console.log(ms)
       if (ms !== 0) {
         ms -= 1
       } else if (time !== undefined) {
@@ -293,11 +294,11 @@ const Controller: NextPage<ControllerProps> = ({ match, playerList }) => {
           } else {
             split[0] = String(Number(split[0]) - 1)
             split[1] = '59'
-            ms = 60
+            ms = 99
           }
         } else {
           split[1] = String(Number(split[1]) - 1)
-          ms = 60
+          ms = 99
         }
       }
       time.innerHTML = `${Number(split[0]) < 10 ? '0' + Number(split[0]) : Number(split[0])}:${Number(split[1]) < 10 ? '0' + Number(split[1]) : Number(split[1])}`
@@ -483,8 +484,7 @@ const Controller: NextPage<ControllerProps> = ({ match, playerList }) => {
       } else {
         data.visitor.lineup2 += `${p.dorsal}.- ${p.name}${p.position ? ` (${p.position})` : ''}\n`
       }
-    })
-  } */
+    })} */
 
   return (
     <div className='min-h-screen h-full bg-gray-300'>
