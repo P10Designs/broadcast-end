@@ -7,6 +7,7 @@ import { getObjects } from 'functions/Reusable'
 import { Data } from 'components/Controller/Data'
 import { Fault } from 'components/Controller/Fault'
 import { Menu } from 'components/Controller/Menu'
+import { checkFaults, lineup } from 'functions/Controller'
 
 const periods = ['PERIODO 1', 'DESCANSO', 'PERIODO 2', 'DESCANSO', 'OVERTIME', 'PENALTIES']
 const perSmall = ['1st', 'DES', '2nd', 'DES', 'OT', 'PEN']
@@ -25,8 +26,7 @@ const data:any = {
   },
   events: [],
   local: {
-    lineup1: undefined,
-    lineup2: undefined,
+    lineup: undefined,
     faults: {
       first: '',
       second: ''
@@ -66,8 +66,7 @@ const data:any = {
     }
   },
   visitor: {
-    lineup1: undefined,
-    lineup2: undefined,
+    lineup: undefined,
     faults: {
       first: '',
       second: ''
@@ -123,20 +122,18 @@ const Controller: NextPage<ControllerProps> = ({ match, playerList }) => {
   const [update, setUpdate] = useState('')
   let ms = 99
 
-  const playerHandler = (row: Player, team:string) => {
-    if (team === 'local') {
-      setPlayerSeleted(data => ({
-        ...data,
-        local: row
-      }))
-    } else if (team === 'visitor') {
-      setPlayerSeleted(data => ({
-        ...data,
-        visitor: row
-      }))
+  useEffect(() => {
+    const id = setInterval(() => {
+      timer()
+    }, 10)
+    const id2 = setInterval(() => {
+      exportData()
+    }, 100)
+    return () => {
+      clearInterval(id)
+      clearInterval(id2)
     }
-    data[team].playerSelected = row
-  }
+  }, [running, posesion])
 
   const exportData = async () => {
     let req = await fetch('https://api.cplv-tv.tk/app/data', {
@@ -168,120 +165,46 @@ const Controller: NextPage<ControllerProps> = ({ match, playerList }) => {
       const time = document.querySelector('#realtime')
       if (time === null || time === undefined || time.textContent === null) return
       const split = time.textContent.split(':')
-      console.log(ms)
       if (ms !== 0) {
         ms -= 1
       } else if (time !== undefined) {
-        if (data.local.faults.first !== '' || data.local.faults.second !== '') {
-          if (data.local.faults.first !== '') {
-            const fault1 = data.local.faults.first.split(':')
-            let update = true
-            if (Number(fault1[1]) === 0) {
-              if (Number(fault1[0]) === 0) {
-                if (data.local.faults.second !== '') {
-                  update = false
-                  data.local.faults.first = data.local.faults.second
-                  data.local.players += 1
-                  data.local.faults.second = ''
-                } else {
-                  data.local.fault.first = ''
-                }
-              } else {
-                fault1[0] = String(Number(fault1[0]) - 1)
-                fault1[1] = '59'
-              }
-            } else {
-              fault1[1] = String(Number(fault1[1]) - 1)
-            }
-            if (update) data.local.fault.first = `${Number(fault1[0]) < 10 ? '0' + Number(fault1[0]) : Number(fault1[0])}:${Number(fault1[1]) < 10 ? '0' + Number(fault1[1]) : Number(fault1[1])}`
-            setUpdate(String(Math.random()))
-          }
-          if (data.local.faults.second !== '') {
-            const fault2 = data.local.faults.second.split(':')
-            if (Number(fault2[1]) === 0) {
-              if (Number(fault2[0]) === 0) {
-                data.local.faults.second = ''
-              } else {
-                fault2[0] = String(Number(fault2[0]) - 1)
-                fault2[1] = '59'
-              }
-            } else {
-              fault2[1] = String(Number(fault2[1]) - 1)
-            }
-            data.local.faults.second = `${Number(fault2[0]) < 10 ? '0' + Number(fault2[0]) : Number(fault2[0])}:${Number(fault2[1]) < 10 ? '0' + Number(fault2[1]) : Number(fault2[1])}`
-            setUpdate(String(Math.random()))
-          }
-        }
-        if (data.visitor.faults.first !== '' || data.visitor.faults.second !== '') {
-          if (data.visitor.faults.first !== '') {
-            const fault1 = data.visitor.faults.first.split(':')
-            let update = true
-            if (Number(fault1[1]) === 0) {
-              if (Number(fault1[0]) === 0) {
-                if (data.visitor.faults.second !== '') {
-                  update = false
-                  data.visitor.faults.first = data.visitor.faults.second
-                  data.visitor.players += 1
-                  data.visitor.faults.second = ''
-                } else {
-                  data.visitor.faults.first = ''
-                }
-              } else {
-                fault1[0] = String(Number(fault1[0]) - 1)
-                fault1[1] = '59'
-              }
-            } else {
-              fault1[1] = String(Number(fault1[1]) - 1)
-            }
-            if (update) data.visitor.faults.first = `${Number(fault1[0]) < 10 ? '0' + Number(fault1[0]) : Number(fault1[0])}:${Number(fault1[1]) < 10 ? '0' + Number(fault1[1]) : Number(fault1[1])}`
-            setUpdate(String(Math.random()))
-          }
-          if (data.visitor.faults.second !== '') {
-            const fault2 = data.visitor.faults.second.split(':')
-            if (Number(fault2[1]) === 0) {
-              if (Number(fault2[0]) === 0) {
-                data.visitor.faults.second = ''
-              } else {
-                fault2[0] = String(Number(fault2[0]) - 1)
-                fault2[1] = '59'
-              }
-            } else {
-              fault2[1] = String(Number(fault2[1]) - 1)
-            }
-            data.visitor.faults.second = `${Number(fault2[0]) < 10 ? '0' + Number(fault2[0]) : Number(fault2[0])}:${Number(fault2[1]) < 10 ? '0' + Number(fault2[1]) : Number(fault2[1])}`
-            setUpdate(String(Math.random()))
-          }
-        }
-
+        const localFaults = checkFaults(data.local.faults, data.local.players)
+        data.local.faults = localFaults.faults
+        data.local.players = localFaults.players
+        const visitorFaults = checkFaults(data.visitor.faults, data.visitor.players)
+        data.visitor.faults = visitorFaults.faults
+        data.visitor.players = visitorFaults.players
         if (posesion !== '') {
-          const passed = (25 * 60) - (Number(split[0]) * 60 + Number(split[1]))
+          const passed = (25 * 60) - (Number(split[0]) * 60 + Number(split[1])) + 1
+          console.log(passed, 'passed')
           if (data.period.big === 'PERIODO 1') {
             if (posesion === 'local') {
               data.local.pos.first += 1
             } else {
               data.visitor.pos.first += 1
             }
-            data.visitor.posTotal = Number((data.visitor.pos.first * 100 / passed).toFixed(2))
-            data.local.posTotal = Number((data.local.pos.first * 100 / passed).toFixed(2))
+            console.log(data.local.pos.first, 'localPos')
+            data.visitor.pos.total = Number(((data.visitor.pos.first * 100) / passed).toFixed(2))
+            data.local.pos.total = Number(((data.local.pos.first * 100) / passed).toFixed(2))
           } else if (data.period.big === 'PERIODO 2') {
             if (posesion === 'local') {
               data.local.pos.second += 1
             } else {
               data.visitor.pos.second += 1
             }
-            data.visitor.posTotal = Number((data.visitor.pos.first * 100 / passed).toFixed(2))
-            data.local.posTotal = Number((data.local.pos.second * 100 / passed).toFixed(2))
+            data.visitor.pos.total = Number((data.visitor.pos.second * 100 / passed).toFixed(2))
+            data.local.pos.total = Number((data.local.pos.second * 100 / passed).toFixed(2))
           } else if (data.period.big === 'OVERTIME') {
             if (posesion === 'local') {
               data.local.pos.third += 1
             } else {
               data.visitor.pos.third += 1
             }
-            data.visitor.posTotal = Number((data.visitor.pos.first * 100 / passed).toFixed(2))
-            data.local.posTotal = Number((data.local.pos.third * 100 / passed).toFixed(2))
+            data.visitor.pos.total = Number((data.visitor.pos.third * 100 / passed).toFixed(2))
+            data.local.pos.total = Number((data.local.pos.third * 100 / passed).toFixed(2))
           }
-          setUpdate(String(Math.random()))
         }
+        setUpdate(String(Math.random()))
         if (Number(split[1]) === 0) {
           if (Number(split[0]) === 0) {
             split[0] = '0'
@@ -302,30 +225,18 @@ const Controller: NextPage<ControllerProps> = ({ match, playerList }) => {
         }
       }
       time.innerHTML = `${Number(split[0]) < 10 ? '0' + Number(split[0]) : Number(split[0])}:${Number(split[1]) < 10 ? '0' + Number(split[1]) : Number(split[1])}`
-      data.time = `${Number(split[0]) < 10 ? '0' + Number(split[0]) : Number(split[0])}:${Number(split[1]) < 10 ? '0' + Number(split[1]) : Number(split[1])}`
       const change = document.querySelector('#time')
       if (change !== null) {
         if (Number(split[0]) >= 1) {
           change.innerHTML = `${Number(split[0]) < 10 ? '0' + Number(split[0]) : Number(split[0])}:${Number(split[1]) < 10 ? '0' + Number(split[1]) : Number(split[1])}`
+          data.time = `${Number(split[0]) < 10 ? '0' + Number(split[0]) : Number(split[0])}:${Number(split[1]) < 10 ? '0' + Number(split[1]) : Number(split[1])}`
         } else {
           change.innerHTML = `${Number(split[1]) < 10 ? '0' + Number(split[1]) : Number(split[1])}.${ms < 10 ? '0' + Number(ms) : ms}`
+          data.time = `${Number(split[1]) < 10 ? '0' + Number(split[1]) : Number(split[1])}.${ms < 10 ? '0' + Number(ms) : ms}`
         }
       }
     }
   }
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      timer()
-    }, 10)
-    const id2 = setInterval(() => {
-      exportData()
-    }, 1000)
-    return () => {
-      clearInterval(id)
-      clearInterval(id2)
-    }
-  }, [running, posesion])
 
   const openModal = () => {
     setChanged({ first: '', second: '' })
@@ -333,22 +244,42 @@ const Controller: NextPage<ControllerProps> = ({ match, playerList }) => {
     setView(true)
   }
 
+  const playerHandler = (row: Player, team:string) => {
+    if (team === 'local') {
+      setPlayerSeleted(data => ({
+        ...data,
+        local: row
+      }))
+    } else if (team === 'visitor') {
+      setPlayerSeleted(data => ({
+        ...data,
+        visitor: row
+      }))
+    }
+    data[team].playerSelected = row
+  }
+
   const mainHandler = (team:string, type:string) => {
     if (type === 'goal' || type === 'fault') {
       setTeam(team)
       setModalType(type)
       openModal()
-    } else if (data.period.big === 'PERIODO 1') {
-      data[team][type].first += 1
-    } else if (data.period.big === 'PERIODO 2') {
-      data[team][type].second += 1
-    } else if (data.period.big === 'OVERTIME') {
-      data[team][type].third += 1
+    } else {
+      if (data.period.big === 'PERIODO 1') {
+        data[team][type].first += 1
+        data[team][type].total += 1
+      } else if (data.period.big === 'PERIODO 2') {
+        data[team][type].second += 1
+        data[team][type].total += 1
+      } else if (data.period.big === 'OVERTIME') {
+        data[team][type].third += 1
+        data[team][type].total += 1
+      }
     }
     setUpdate(String(Math.random()))
   }
 
-  const handleSave = () => {
+  const saveHandler = () => {
     if (modalType === 'clock') {
       const time = document.querySelector('#realtime')
       const change = document.querySelector('#time')
@@ -396,7 +327,7 @@ const Controller: NextPage<ControllerProps> = ({ match, playerList }) => {
       let assist = ''
       if (changed.first !== '') {
         const split = getObjects(players[team], 'dorsal', changed.first)[0].name.split(',')
-        goal = `${split[1]} ${split[0].split(' ')[0]}`
+        goal = `${split[1].trim()} ${(split[0].split(' ')[0]).length <= 2 ? `${split[0].split(' ')[0]} ${split[0].split(' ')[1].trim()}` : split[0].split(' ')[0].trim()}`
         for (let i = 0; i < players[team].length; i++) {
           if (players[team][i].dorsal === changed.first) {
             players[team][i].matchStats.g += 1
@@ -405,7 +336,7 @@ const Controller: NextPage<ControllerProps> = ({ match, playerList }) => {
       }
       if (changed.second !== '') {
         const split = getObjects(players[team], 'dorsal', changed.second)[0].name.split(',')
-        assist = `${split[1]} ${(split[0].split(' ')[0]) === 'DE' ? `${split[0]}` : split[0].split(' ')[0]}`
+        assist = `${split[1].trim()} ${(split[0].split(' ')[0]).length <= 2 ? `${split[0].trim()}` : split[0].split(' ')[0].trim()}`
         for (let i = 0; i < players[team].length; i++) {
           if (players[team][i].dorsal === changed.second) {
             players[team][i].matchStats.a += 1
@@ -445,7 +376,7 @@ const Controller: NextPage<ControllerProps> = ({ match, playerList }) => {
         }
       }
       const split = getObjects(players[team], 'dorsal', changed.first)[0].name.split(',')
-      const fault = `${split[1]} ${split[0].split(' ')[0]}`
+      const fault = `${split[1].trim()} ${(split[0].split(' ')[0]).length <= 2 ? `${split[0].split(' ')[0]} ${split[0].split(' ')[1].trim()}` : split[0].split(' ')[0].trim()}`
       data[team].string = `${fault}, F: ${changed.second}`
     }
   }
@@ -459,39 +390,17 @@ const Controller: NextPage<ControllerProps> = ({ match, playerList }) => {
   players.local = players.local.sort((a:Player, b:Player) => Number(a.dorsal) - Number(b.dorsal))
   players.visitor = playerList.filter((a) => a.team.acronym === match.visitor.acronym)
   players.visitor = players.visitor.sort((a:Player, b:Player) => Number(a.dorsal) - Number(b.dorsal))
-  /* if (data.local.lineup1 === undefined) {
-    data.local.lineup1 = ''
-    data.local.lineup2 = ''
-    localPlayers.forEach((p, i) => {
-      p.name = `${p.name.split(',')[1]} ${p.name.split(',')[0]}`.trim().toLowerCase().split(' ').map((e) => e[0].toUpperCase() + e.substr(1)).join(' ')
-      if (i < 13) {
-        data.local.lineup1 += `${p.dorsal}.- ${p.name}${p.position ? ` (${p.position})` : ''}\n`
-      } else {
-        data.local.lineup2 += `${p.dorsal}.- ${p.name}${p.position ? ` (${p.position})` : ''}\n`
-      }
-    })
+  if (data.local.lineup === undefined && data.visitor.lienup === undefined) {
+    data.local.lineup = lineup(players.local)
+    data.visitor.lineup = lineup(players.visitor)
   }
-  if (data.visitor.lineup1 === undefined) {
-    data.visitor.lineup1 = ''
-    data.visitor.lineup2 = ''
-    visitorPlayers.forEach((p, i) => {
-      p.name = `${p.name.split(',')[1]} ${p.name.split(',')[0]}`.trim().toLowerCase().split(' ').map((e) => e[0].toUpperCase() + e.substr(1)).join(' ')
-      if (i < 13) {
-        data.visitor.lineup1 += `${p.dorsal}.- ${p.name}${p.position ? ` (${p.position})` : ''}`
-        if (i < 12) {
-          data.visitor.lineup1 += ' \n'
-        }
-      } else {
-        data.visitor.lineup2 += `${p.dorsal}.- ${p.name}${p.position ? ` (${p.position})` : ''}\n`
-      }
-    })} */
 
   return (
     <div className='min-h-screen h-full bg-gray-300'>
       <div id="realtime" className='hidden'>25:00</div>
       <div className='hidden'>{update}</div>
       {view &&
-        <Menu setView={setView} handleSave={handleSave} modalType={modalType} changed={changed} players={players[team]} />
+        <Menu setView={setView} handleSave={saveHandler} modalType={modalType} changed={changed} players={players[team]} />
       }
       <div className='inline-flex flex-wrap w-full h-special-1 items-start justify-start'>
         <TeamComponent selected={selected} team='local' match={match.local} players={players.local} playerSelected={playerSelected.local} setPlayerSelected={playerHandler}/>
