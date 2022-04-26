@@ -7,8 +7,8 @@ import AddIcon from '@mui/icons-material/Add'
 import PlayerComponent from 'components/Lineup/Player'
 import PlayerAdd from 'components/Lineup/PlayerAdd'
 import EditPlayer from 'components/Lineup/EditPlayer'
-import { getAllPlayers, update, setPlayerStats } from 'Functions/Lineup'
-import { getObjects } from 'Functions/Reusable'
+import { getAllPlayers, update, setPlayerStats } from 'functions/Lineup'
+import { getObjects } from 'functions/Reusable'
 interface LineupProps{
   match: Match,
   players: Player[],

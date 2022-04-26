@@ -3,7 +3,7 @@ import type { GetServerSideProps, NextPage } from 'next'
 import { TeamComponent, ShootCounter, Score, Time, Selector, Buttons } from 'components/Controller/Main'
 import { useEffect, useState } from 'react'
 
-import { getObjects } from 'Functions/Reusable'
+import { getObjects } from 'functions/Reusable'
 import { Data } from 'components/Controller/Data'
 import { Fault } from 'components/Controller/Fault'
 import { Menu } from 'components/Controller/Menu'

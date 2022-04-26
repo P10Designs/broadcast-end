@@ -6,7 +6,7 @@ import SupportAgentIcon from '@mui/icons-material/SupportAgent'
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount'
 import SettingsRemoteIcon from '@mui/icons-material/SettingsRemote'
 import MatchHeader from 'components/MatchHeader'
-import { getObjects } from 'Functions/Reusable'
+import { getObjects } from 'functions/Reusable'
 
 interface MenuProps{
   match: Match,
