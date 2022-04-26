@@ -48,7 +48,7 @@ export const TeamComponent: FC<TeamComponentInterface> = ({ team, match, players
                       <TableRow
                         key={row.name + i}
                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        className={(i % 2 !== 0 ? 'bg-gray-200 text-center' : 'text-center') + (playerSelected !== undefined && playerSelected.name === row.name ? ' bg-green-600' : '')}
+                        className={(i % 2 !== 0 ? 'bg-gray-200 text-center' : 'text-center') + (playerSelected !== undefined && typeof playerSelected !== 'string' && playerSelected.name === row.name ? ' bg-green-600' : '')}
                         onClick={() => { setPlayerSelected(row, team) }}
                       >
                         <TableCell className='py-1'>
@@ -66,7 +66,7 @@ export const TeamComponent: FC<TeamComponentInterface> = ({ team, match, players
                       <TableRow
                         key={row.name + i}
                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        className={(i % 2 !== 0 ? 'bg-gray-200 text-center' : 'text-center') + (playerSelected !== undefined && playerSelected.name === row.name ? ' bg-green-600' : '')}
+                        className={(i % 2 !== 0 ? 'bg-gray-200 text-center' : 'text-center') + (playerSelected !== undefined && typeof playerSelected !== 'string' && playerSelected.name === row.name ? ' bg-green-600' : '')}
                         onClick={() => { setPlayerSelected(row, team) }}
                       >
                         <TableCell className='py-1'>
@@ -161,27 +161,25 @@ export const Selector: FC<SelectorInterface> = ({ setSelected, selected }) => {
 interface ButtonInterface{
   timeHandler: (e:boolean) => void,
   timeRunning: boolean,
-  goalHandler: (team:string) => void,
-  shootHandler: (team:string) => void,
-  saqueHandler: (team:string) => void,
+  mainHandler: (e:string, x:string) => void
   posesion: (team: string) => void,
-  faultHandler: (team: string) => void,
 }
 
-export const Buttons:FC<ButtonInterface> = ({ timeHandler, timeRunning, goalHandler, shootHandler, saqueHandler, posesion, faultHandler }) => {
+export const Buttons:FC<ButtonInterface> = ({ timeHandler, timeRunning, mainHandler, posesion }) => {
   const classButton = 'flex flex-col bg-[#0078b2] items-center justify-center text-white font-bold text-sm rounded-2xl mx-1 hover:bg-[#003954] transition-all'
+
   return (
     <div className='w-full px-3 bg-[#656665] h-max inline-flex items-center justify-end'>
       <div className='inline-flex items-center justify-center w-2/5'>
-        <button className={classButton + ' w-24 h-24'} onClick={() => { shootHandler('local') }}>
+        <button className={classButton + ' w-24 h-24'} onClick={() => { mainHandler('local', 'shoot') }}>
           <GpsFixedIcon />
           <span className='mt-1'>TIRO</span>
         </button>
-        <button className={classButton + ' w-24 h-24'} onClick={() => { faultHandler('local') }}>
+        <button className={classButton + ' w-24 h-24'} onClick={() => { mainHandler('local', 'fault') }}>
           <Sports />
           <span className='mt-1'>FALTA</span>
         </button>
-        <button className={classButton + ' w-24 h-24'} onClick={() => { saqueHandler('local') }}>
+        <button className={classButton + ' w-24 h-24'} onClick={() => { mainHandler('local', 'saque') }}>
           <SportsHockey />
           <span className='mt-1'>SAQUE</span>
         </button>
@@ -192,11 +190,11 @@ export const Buttons:FC<ButtonInterface> = ({ timeHandler, timeRunning, goalHand
       </div>
       <div className='flex flex-col items-center justify-center w-1/5 my-2 h-full'>
         <div className='inline-flex items-center justify-center w-full h-full'>
-          <button className={classButton + ' w-28 h-28'} onClick={() => { goalHandler('local') }}>
+          <button className={classButton + ' w-28 h-28'} onClick={() => { mainHandler('local', 'goal') }}>
             <SportsScore />
             GOAL
           </button>
-          <button className={classButton + ' w-28 h-28'} onClick={() => { goalHandler('visitor') }}>
+          <button className={classButton + ' w-28 h-28'} onClick={() => { mainHandler('visitor', 'goal') }}>
             <SportsScore />
             GOAL
           </button>
@@ -206,15 +204,15 @@ export const Buttons:FC<ButtonInterface> = ({ timeHandler, timeRunning, goalHand
         </button>
       </div>
       <div className='flex flex-row-reverse justify-center items-center w-2/5'>
-        <button className={classButton + ' w-24 h-24'} onClick={() => { shootHandler('visitor') }}>
+        <button className={classButton + ' w-24 h-24'} onClick={() => { mainHandler('visitor', 'shoot') }}>
           <GpsFixedIcon />
           <span className='mt-1'>TIRO</span>
         </button>
-        <button className={classButton + ' w-24 h-24'} onClick={() => { faultHandler('visitor') }}>
+        <button className={classButton + ' w-24 h-24'} onClick={() => { mainHandler('visitor', 'fault') }}>
           <Sports />
           <span className='mt-1'>FALTA</span>
         </button>
-        <button className={classButton + ' w-24 h-24'} onClick={() => { saqueHandler('saque') }}>
+        <button className={classButton + ' w-24 h-24'} onClick={() => { mainHandler('visitor', 'saque') }}>
           <SportsHockey />
           <span className='mt-1'>SAQUE</span>
         </button>
