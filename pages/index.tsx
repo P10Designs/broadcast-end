@@ -36,7 +36,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   let req = await fetch('https://api.cplv-tv.tk/match')
   let matches = await req.json()
   const leagues:any[] = []
-  matches = matches.filter((m:any) => m.period !== ('FINAL' || 'APLAZADO'))
+  //  matches = matches.filter((m:any) => m.period !== ('FINAL' || 'APLAZADO'))
   matches = matches.sort((a:any, b:any) => new Date(a.date) < new Date(b.date))
   matches.forEach((match:any) => {
     const league = match.league.indexOf('-') !== -1 ? match.league.split('-')[0].trim() : match.league

@@ -35,7 +35,7 @@ const MatchTable: FC<MatchTableInterface> = ({ selected, row, _o, setSelected })
     <TableCell className='text-center'>
       <Image src={row.visitor.logo} height={25} width={25} />
     </TableCell>
-    <TableCell className='capitalize text-center'>{new Date(row.date).toLocaleString([], { weekday: 'short', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</TableCell>
+    <TableCell className='capitalize text-center'>{new Date(row.date).toLocaleString(['es-ES'], { weekday: 'short', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</TableCell>
     <TableCell className='text-center'>{row.period}</TableCell>
     <TableCell className='text-center' align="right">
       {row.score.local || 0} : {row.score.visitor || 0}
