@@ -138,7 +138,6 @@ export const Penalties:FC<PenaltiesInterface> = ({ changed, data }) => {
       total: data.local.penalties.total || 0
     }
   })
-  console.log(Check)
   const button = (team: string, place: string) => (
     <div className='flex flex-col'>
       <Button onClick={() => {

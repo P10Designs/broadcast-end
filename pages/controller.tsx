@@ -121,8 +121,8 @@ const data:any = {
 
 const Controller: NextPage<ControllerProps> = ({ match, playerList }) => {
   const [selected, setSelected] = useState('season')
-  const [view, setView] = useState(true)
-  const [modalType, setModalType] = useState('penalties')
+  const [view, setView] = useState(false)
+  const [modalType, setModalType] = useState('')
   const [playerSelected, setPlayerSeleted] = useState<{local:Player | string, visitor:Player | string}>({ local: '', visitor: '' })
   const [running, setTimeRunning] = useState(false)
   const [changed, setChanged] = useState({
@@ -295,10 +295,10 @@ const Controller: NextPage<ControllerProps> = ({ match, playerList }) => {
     if (modalType === 'clock') {
       const time = document.querySelector('#realtime')
       const change = document.querySelector('#time')
-      if (time === null || time === undefined || change === null) return
+      setView(false)
+      if (time === null || time === undefined || change === null || changed.first === '') return
       time.textContent = changed.first
       change.innerHTML = changed.first
-      setView(false)
     } else if (modalType === 'period') {
       if (changed.first === 'PERIODO 1' || changed.first === 'PERIODO 2') {
         const time = document.querySelector('#realtime')
