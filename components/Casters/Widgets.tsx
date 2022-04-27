@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { Match, Player } from 'constants/interfaces'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import CloseIcon from '@mui/icons-material/Close'
-import { getObjects } from 'Functions/Reusable'
+import { getObjects } from 'functions/Reusable'
 interface WidgetInterface{
   match: Match,
   data: any

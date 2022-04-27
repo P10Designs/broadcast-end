@@ -1,2 +1,2 @@
 TODO:
-- Penalties controller change
+- Time dissapears on change if not modified

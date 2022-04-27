@@ -26,6 +26,12 @@ const data:any = {
   },
   events: [],
   local: {
+    penalties: {
+      first: '',
+      second: '',
+      third: '',
+      total: 0
+    },
     lineup: undefined,
     faults: {
       first: '',
@@ -67,6 +73,12 @@ const data:any = {
   },
   visitor: {
     lineup: undefined,
+    penalties: {
+      first: '',
+      second: '',
+      third: '',
+      total: 0
+    },
     faults: {
       first: '',
       second: ''
@@ -109,8 +121,8 @@ const data:any = {
 
 const Controller: NextPage<ControllerProps> = ({ match, playerList }) => {
   const [selected, setSelected] = useState('season')
-  const [view, setView] = useState(false)
-  const [modalType, setModalType] = useState('')
+  const [view, setView] = useState(true)
+  const [modalType, setModalType] = useState('penalties')
   const [playerSelected, setPlayerSeleted] = useState<{local:Player | string, visitor:Player | string}>({ local: '', visitor: '' })
   const [running, setTimeRunning] = useState(false)
   const [changed, setChanged] = useState({
@@ -286,6 +298,7 @@ const Controller: NextPage<ControllerProps> = ({ match, playerList }) => {
       if (time === null || time === undefined || change === null) return
       time.textContent = changed.first
       change.innerHTML = changed.first
+      setView(false)
     } else if (modalType === 'period') {
       if (changed.first === 'PERIODO 1' || changed.first === 'PERIODO 2') {
         const time = document.querySelector('#realtime')
@@ -293,12 +306,17 @@ const Controller: NextPage<ControllerProps> = ({ match, playerList }) => {
         if (time === null || time === undefined || change === null) return
         time.textContent = '25:00'
         change.innerHTML = '25:00'
+        setView(false)
       } else if (changed.first === 'OVERTIME') {
         const time = document.querySelector('#realtime')
         const change = document.querySelector('#time')
         if (time === null || time === undefined || change === null) return
         time.textContent = '05:00'
         change.innerHTML = '05:00'
+        setView(false)
+      } else if (changed.first === 'PENALTIES') {
+        setModalType('penalties')
+        openModal()
       }
       data.period.big = changed.first
       data.period.small = perSmall[periods.indexOf(changed.first)]
@@ -321,6 +339,7 @@ const Controller: NextPage<ControllerProps> = ({ match, playerList }) => {
         data[team].goal.third += 1
         data[team].shoot.third += 1
       }
+      setView(false)
       data[team].goal.total += 1
       data[team].shoot.total += 1
       let goal = ''
@@ -354,6 +373,7 @@ const Controller: NextPage<ControllerProps> = ({ match, playerList }) => {
         time: data.time,
         period: data.period.small
       })
+      setView(false)
       if (data.period.big === 'PERIODO 1') {
         data[team].fault.first += 1
       } else if (data.period.big === 'PERIODO 2') {
@@ -400,10 +420,10 @@ const Controller: NextPage<ControllerProps> = ({ match, playerList }) => {
       <div id="realtime" className='hidden'>25:00</div>
       <div className='hidden'>{update}</div>
       {view &&
-        <Menu setView={setView} handleSave={saveHandler} modalType={modalType} changed={changed} players={players[team]} />
+        <Menu setView={setView} handleSave={saveHandler} modalType={modalType} changed={changed} players={players[team]} data={data} />
       }
       <div className='inline-flex flex-wrap w-full h-special-1 items-start justify-start'>
-        <TeamComponent selected={selected} team='local' match={match.local} players={players.local} playerSelected={playerSelected.local} setPlayerSelected={playerHandler}/>
+      <TeamComponent selected={selected} team='local' match={match.local} players={players.local} playerSelected={playerSelected.local} setPlayerSelected={playerHandler}/>
         <div className='w-1/5 h-full flex flex-col items-start justify-start'>
           <div className='w-full h-12 inline-flex items-center justify-center  bg-black'>
             <ShootCounter shoots={data.local.shoot.total}/>
