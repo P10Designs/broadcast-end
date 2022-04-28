@@ -1,2 +1,5 @@
 TODO:
- - Penalties still broken
+ - Penalties
+  ✔ SUMA COMPONENTE
+  ✔ CSS BROKEN
+  - SUMA GENERAL

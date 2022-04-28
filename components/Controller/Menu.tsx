@@ -29,7 +29,7 @@ export const Menu:FC<MenuInterface> = ({ modalType, changed, players, setView, h
         {modalType === 'period' && <Period changed={changed} />}
         {modalType === 'goal' && <MainModal changed={changed} text1='ANOTADOR' text2='ASISTENTE' players={players} />}
         {modalType === 'fault' && <MainModal changed={changed} text1='JUGADOR' text2='FALTA' players={players} />}
-        {modalType === 'penalties' && <Penalties changed={changed} data={data} />}
+        {modalType === 'penalties' && <Penalties data={data} />}
       </div>
         <div className='inline-flex items-center justify-between w-5/6 p-5 text-white'>
           <button onClick={() => { setView(false) }} className='mx-1.5 bg-gray-500 px-2 py-1 rounded-md inline-flex uppercase text-xs font-bold items-center justify-center hover:bg-gray-700 transition-all'>
