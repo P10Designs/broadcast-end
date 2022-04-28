@@ -1,2 +1,2 @@
 TODO:
-- Time dissapears on change if not modified
+ - Change time button 

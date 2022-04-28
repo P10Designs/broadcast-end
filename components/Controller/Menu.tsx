@@ -19,7 +19,7 @@ interface MenuInterface {
 
 export const Menu:FC<MenuInterface> = ({ modalType, changed, players, setView, handleSave, data }) => (
   <div className='w-full h-full absolute z-10 bg-black/60 flex items-center justify-center'>
-    <div className={'flex flex-col items-center justify-start bg-white rounded ' + (modalType !== 'goal' && modalType !== 'fault' && modalType !== 'penalties' ? 'w-1/3' : 'w-1/2')}>
+    <div className={'flex flex-col items-center justify-start bg-white rounded ' + (modalType !== 'goal' && modalType !== 'fault' && modalType !== 'penalties' ? 'w-1/3' : 'w-max')}>
       <div className='text-left w-full bg-[#013a54] text-white font-semibold inline-flex items-center justify-start px-2'>
         <StorageIcon />
         <span className='ml-1'>EDICION DE {modalType.toUpperCase()}...</span>

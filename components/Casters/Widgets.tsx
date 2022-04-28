@@ -26,13 +26,13 @@ export const Shoots: FC<WidgetInterface> = ({ match, data }) => (
           <span className='mx-2'>{match.local.acronym}</span>
         </td>
         <td className='text-left relative border-r w-[325px]'>
-          <div style={{ width: `${(data.local.goalsTotal * 325) / 50}px` }} className='absolute bg-[#0087bd] h-[20px]'></div>
-          <div style={{ width: `${(data.local.shootsTotal * 325) / 50}px` }} className='bg-[#d5d6d5] h-[20px]'></div>
+          <div style={{ width: `${(data.local.goal.total * 325) / 50}px` }} className='absolute bg-[#0087bd] h-[20px]'></div>
+          <div style={{ width: `${(data.local.shoot.total * 325) / 50}px` }} className='bg-[#d5d6d5] h-[20px]'></div>
           <div></div>
         </td>
-        <td className='border-r'>{data.local.goalsTotal}</td>
-        <td className='border-r'>{data.local.shootsTotal}</td>
-        <td>{isNaN((data.local.goalsTotal * 100) / data.local.shootsTotal) ? '0.00' : ((data.local.goalsTotal * 100) / data.local.shootsTotal).toFixed(2)}</td>
+        <td className='border-r'>{data.local.goal.total}</td>
+        <td className='border-r'>{data.local.shoot.total}</td>
+        <td>{isNaN((data.local.goal.total * 100) / data.local.shoot.total) ? '0.00' : ((data.local.goal.total * 100) / data.local.shoot.total).toFixed(2)}</td>
       </tr>
       <tr className='text-center border-[#d5d6d5]'>
         <td className='text-left inline-flex items-center border-r justify-center w-[80px]'>
@@ -40,13 +40,13 @@ export const Shoots: FC<WidgetInterface> = ({ match, data }) => (
           <span className='mx-2'>{match.visitor.acronym}</span>
         </td>
         <td className='text-left relative border-r w-[325px]'>
-          <div style={{ width: `${(data.visitor.goalsTotal * 325) / 50}px` }} className='absolute bg-[#0087bd] h-[20px]'></div>
-          <div style={{ width: `${(data.visitor.shootsTotal * 325) / 50}px` }} className='bg-[#d5d6d5] h-[20px]'></div>
+          <div style={{ width: `${(data.visitor.goal.total * 325) / 50}px` }} className='absolute bg-[#0087bd] h-[20px]'></div>
+          <div style={{ width: `${(data.visitor.goal.total * 325) / 50}px` }} className='bg-[#d5d6d5] h-[20px]'></div>
           <div></div>
         </td>
-        <td className='border-r'>{data.visitor.goalsTotal}</td>
-        <td className='border-r'>{data.visitor.shootsTotal}</td>
-        <td>{isNaN((data.visitor.goalsTotal * 100) / data.visitor.shootsTotal) ? '0.00' : ((data.visitor.goalsTotal * 100) / data.visitor.shootsTotal).toFixed(2)}</td>
+        <td className='border-r'>{data.visitor.goal.total}</td>
+        <td className='border-r'>{data.visitor.shoot.total}</td>
+        <td>{isNaN((data.visitor.goal.total * 100) / data.visitor.shoot.total) ? '0.00' : ((data.visitor.goalsTotal * 100) / data.visitor.shoot.total).toFixed(2)}</td>
       </tr>
     </tbody>
   </table>
@@ -66,11 +66,11 @@ export const Possesion: FC<WidgetInterface> = ({ match, data }) => (
           <span className='mx-2'>{match.local.acronym}</span>
         </td>
         <td className='text-left inline-flex relative border-r w-[800px]'>
-          <div className='mx-2'>{data.local.posTotal}%</div>
-          <div style={{ width: `${(data.local.posTotal * 800) / 100}px` }} className='float-left bg-[#0087bd] h-[20px]'></div>
-          <div style={{ width: `${((100 - (data.local.posTotal + data.visitor.posTotal)) * 800) / 100}px` }} className='float-left text-center bg-[#d5d6d5] h-[20px]'>{(100 - (data.local.posTotal + data.visitor.posTotal)).toFixed(2)}%</div>
-          <div style={{ width: `${(data.visitor.posTotal * 800) / 100}px` }} className='float-right bg-[#ff0101] h-[20px]'></div>
-          <div className='mx-2'>{data.visitor.posTotal}%</div>
+          <div className='mx-2'>{data.local.pos.total}%</div>
+          <div style={{ width: `${(data.local.pos.total * 800) / 100}px` }} className='float-left bg-[#0087bd] h-[20px]'></div>
+          <div style={{ width: `${((100 - (data.local.pos.total + data.visitor.pos.total)) * 800) / 100}px` }} className='float-left text-center bg-[#d5d6d5] h-[20px]'>{(100 - (data.local.pos.total + data.visitor.pos.total)).toFixed(2)}%</div>
+          <div style={{ width: `${(data.visitor.pos.total * 800) / 100}px` }} className='float-right bg-[#ff0101] h-[20px]'></div>
+          <div className='mx-2'>{data.visitor.pos.total}%</div>
         </td>
         <td className='text-left inline-flex items-center border-r justify-center w-[80px]'>
           <span className='mx-2'>{match.visitor.acronym}</span>
@@ -96,10 +96,10 @@ export const Sancion: FC<WidgetInterface> = ({ match, data }) => (
           <span className='mx-2'>{match.local.acronym}</span>
         </td>
         <td className='text-left relative border-r w-[150px]'>
-          <div style={{ width: `${(data.local.pimTotal * 150) / 20}px` }} className='bg-[#0087bd] h-[20px]'></div>
+          <div style={{ width: `${(data.local.fault.total * 150) / 20}px` }} className='bg-[#0087bd] h-[20px]'></div>
           <div></div>
         </td>
-        <td>{data.local.pimTotal}</td>
+        <td>{data.local.fault.total}</td>
       </tr>
       <tr className='border-b border-[#d5d6d5]'>
         <td className='text-left inline-flex items-center border-r justify-center w-[80px]'>
@@ -107,9 +107,9 @@ export const Sancion: FC<WidgetInterface> = ({ match, data }) => (
           <span className='mx-2'>{match.visitor.acronym}</span>
         </td>
         <td className='text-left relative border-r w-[150px]'>
-          <div style={{ width: `${(data.visitor.pimTotal * 150) / 20}px` }} className='bg-[#0087bd] h-[20px]'></div>
+          <div style={{ width: `${(data.visitor.fault.total * 150) / 20}px` }} className='bg-[#0087bd] h-[20px]'></div>
         </td>
-        <td>{data.visitor.pimTotal}</td>
+        <td>{data.visitor.fault.total}</td>
       </tr>
     </tbody>
   </table>
@@ -134,10 +134,10 @@ export const Marcador: FC<WidgetInterface> = ({ match, data }) => (
           <Image src={match.local.logo} height={25} width={25} />
           <span className='mx-2'>{match.local.acronym}</span>
         </td>
-        <td className='border-r'>{data.local.goals.first}</td>
-        <td className='border-r'>{data.local.goals.second}</td>
-        <td className='border-r'>{data.local.goals.third}</td>
-        <td className='bg-[#0087bd] text-white font-bold'>{data.local.goalsTotal}</td>
+        <td className='border-r'>{data.local.goal.first}</td>
+        <td className='border-r'>{data.local.goal.second}</td>
+        <td className='border-r'>{data.local.goal.third}</td>
+        <td className='bg-[#0087bd] text-white font-bold'>{data.local.goal.total}</td>
       </tr>
       <tr>
         <td></td>
@@ -145,10 +145,10 @@ export const Marcador: FC<WidgetInterface> = ({ match, data }) => (
           <Image src={match.visitor.logo} height={25} width={25} />
           <span className='mx-2'>{match.visitor.acronym}</span>
         </td>
-        <td className='border-r'>{data.visitor.goals.first}</td>
-        <td className='border-r'>{data.visitor.goals.second}</td>
-        <td className='border-r'>{data.visitor.goals.third}</td>
-        <td className='bg-[#0087bd] text-white font-bold'>{data.visitor.goalsTotal}</td>
+        <td className='border-r'>{data.visitor.goal.first}</td>
+        <td className='border-r'>{data.visitor.goal.second}</td>
+        <td className='border-r'>{data.visitor.goal.third}</td>
+        <td className='bg-[#0087bd] text-white font-bold'>{data.visitor.goal.total}</td>
       </tr>
     </tbody>
   </table>
@@ -173,7 +173,7 @@ export const Penalties: FC<WidgetInterface> = ({ match, data }) => (
         <td className='border-r'>{data.local.faults.first}</td>
         <td className='border-r'>{data.local.faults.second}</td>
         <td className='border-r'>{data.local.faults.third}</td>
-        <td className='text-white font-bold bg-[#0087bd]'>{data.local.pimTotal}</td>
+        <td className='text-white font-bold bg-[#0087bd]'>{data.local.faultTotal}</td>
       </tr>
       <tr>
         <td></td>
@@ -181,7 +181,7 @@ export const Penalties: FC<WidgetInterface> = ({ match, data }) => (
         <td className='border-r'>{data.visitor.faults.first}</td>
         <td className='border-r'>{data.visitor.faults.second}</td>
         <td className='border-r'>{data.visitor.faults.third}</td>
-        <td className='text-white font-bold bg-[#0087bd]'>{data.visitor.pimTotal}</td>
+        <td className='text-white font-bold bg-[#0087bd]'>{data.visitor.faultTotal}</td>
       </tr>
     </tbody>
   </table>

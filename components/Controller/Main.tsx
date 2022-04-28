@@ -55,7 +55,7 @@ export const TeamComponent: FC<TeamComponentInterface> = ({ team, match, players
                           {row.dorsal}
                         </TableCell>
                         <TableCell className='py-0'>{row.position}</TableCell>
-                        <TableCell className='text-xs py-0'>{row.name}</TableCell>
+                        <TableCell className='text-[10px] py-0 break-normal'>{row.name}</TableCell>
                         <TableCell className='py-0' align="right">{row.stats.g}</TableCell>
                         <TableCell className='py-0' align="right">{row.stats.a}</TableCell>
                         <TableCell className='py-0' align="right">{row.stats.pim}</TableCell>
@@ -190,11 +190,11 @@ export const Buttons:FC<ButtonInterface> = ({ timeHandler, timeRunning, mainHand
       </div>
       <div className='flex flex-col items-center justify-center w-1/5 my-2 h-full'>
         <div className='inline-flex items-center justify-center w-full h-full'>
-          <button className={classButton + ' w-28 h-28'} onClick={() => { mainHandler('local', 'goal') }}>
+          <button className={classButton + ' w-20 h-20'} onClick={() => { mainHandler('local', 'goal') }}>
             <SportsScore />
             GOAL
           </button>
-          <button className={classButton + ' w-28 h-28'} onClick={() => { mainHandler('visitor', 'goal') }}>
+          <button className={classButton + ' w-20 h-20'} onClick={() => { mainHandler('visitor', 'goal') }}>
             <SportsScore />
             GOAL
           </button>

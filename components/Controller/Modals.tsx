@@ -66,7 +66,7 @@ export const MainModal:FC<ModalInterface> = ({ players, text1, text2, changed })
     second: ''
   })
   return (
-    <div className='flex flex-col my-5'>
+    <div className='flex flex-col my-5 px-2'>
       <span className='font-bold py-2'>{text1}</span>
         <div className='inline-flex'>
           {players.map((player, i) => (
