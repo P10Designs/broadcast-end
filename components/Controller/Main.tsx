@@ -55,7 +55,7 @@ export const TeamComponent: FC<TeamComponentInterface> = ({ team, match, players
                           {row.dorsal}
                         </TableCell>
                         <TableCell className='py-0'>{row.position}</TableCell>
-                        <TableCell className='text-[10px] py-0 break-normal'>{row.name}</TableCell>
+                        <TableCell className='text-xs py-0'><input disabled className='bg-transparent w-full' value={row.name} /></TableCell>
                         <TableCell className='py-0' align="right">{row.stats.g}</TableCell>
                         <TableCell className='py-0' align="right">{row.stats.a}</TableCell>
                         <TableCell className='py-0' align="right">{row.stats.pim}</TableCell>
@@ -73,7 +73,7 @@ export const TeamComponent: FC<TeamComponentInterface> = ({ team, match, players
                           {row.dorsal}
                         </TableCell>
                         <TableCell className='py-0'>{row.position}</TableCell>
-                        <TableCell className='text-xs py-0'>{row.name}</TableCell>
+                        <TableCell className='text-xs py-0'><input disabled className='bg-transparent w-full' value={row.name} /></TableCell>
                         <TableCell className='py-0' align="right">{row.matchStats?.g}</TableCell>
                         <TableCell className='py-0' align="right">{row.matchStats?.a}</TableCell>
                         <TableCell className='py-0' align="right">{row.matchStats?.pim}</TableCell>

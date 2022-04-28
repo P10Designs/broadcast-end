@@ -1,2 +1,2 @@
 TODO:
- - Change time button 
+ - Penalties still broken
