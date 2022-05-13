@@ -389,7 +389,7 @@ const Controller: NextPage<ControllerProps> = ({ match, playerList }) => {
       }
       if (data[team].players >= 3) data[team].players -= 1
       if (data[team].players === 3 && data[team === 'local' ? 'visitor' : 'local'].players === 4) data.situation = 'POWERPLAY'
-      else data.situation = data[team].players + ' vs ' + data[team === 'local' ? 'visitor' : 'local'].players
+      else data.situation = data[team === 'local' ? 'visitor' : 'local'].players + ' vs ' + data[team].players
       for (let i = 0; i < players[team].length; i++) {
         if (players[team][i].dorsal === changed.first) {
           players[team][i].matchStats.pim += 2
