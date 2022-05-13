@@ -50,8 +50,10 @@ export const lineup = (players:any) => {
   }
   players.forEach((p:Player, i:number) => {
     const name = `${p.name.split(',')[1]} ${p.name.split(',')[0]}`.trim().toLowerCase().split(' ').map((e) => e[0].toUpperCase() + e.substr(1)).join(' ')
-    if (i < 12) {
+    if (i < 10) {
       lineups.first += `${p.dorsal}.- ${name}${p.position ? ` (${p.position})` : ''}\n`
+    } else if (i === 10) {
+      lineups.first += `${p.dorsal}.- ${name}${p.position ? ` (${p.position})` : ''}`
     } else {
       lineups.second += `${p.dorsal}.- ${name}${p.position ? ` (${p.position})` : ''}\n`
     }
