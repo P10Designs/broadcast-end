@@ -14,6 +14,7 @@ export const checkFaults = (faults:any, players:any) => {
           } else {
             update = false
             faults.first = ''
+            players += 1
           }
         } else {
           first[0] = String(Number(first[0]) - 1)
